@@ -11,118 +11,78 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 
-namespace GAuthenticator
+using Microsoft.Phone.Shell;
+
+namespace Authenticator
 {
     public partial class MainPage : PhoneApplicationPage
     {
+        private Authenticator.App _application = null;
+        private ProgressIndicator _progressIndicator = null;
+        
         // Constructor
-        private App a;
         public MainPage()
         {
             InitializeComponent();
-            a = (App)Application.Current;
-            GPinGenerator.intervalLength = 30;
-            GPinGenerator.pinCodeLength = 6;
-            pbTimeLeft.Minimum = 0;
-            pbTimeLeft.Maximum = GPinGenerator.intervalLength;
+            _application = (Authenticator.App)Application.Current;
+
+            this.lstAccounts.ItemsSource = _application.Database.AccountList;
+
+            CodeGenerator.intervalLength = 30;
+            CodeGenerator.pinCodeLength = 6;
         }
 
         private void btnAddAccount_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new Uri("/AddAccount.xaml", UriKind.Relative));
-        }
-
-        private void UpdateStackPanel()
-        {
-            //clear current data in stack panel
-            SPAccounts.Children.Clear();
-            //for every account
-            int i = 0;
-            foreach (Account acct in a.WorkingDB.Accounts)
-            {
-                //retrieve account information
-                string tempName = acct.AccountName;
-                //generate new stack panel
-                StackPanel tempSP = new StackPanel();
-                StackPanel tempSP2 = new StackPanel();
-                tempSP.Orientation = System.Windows.Controls.Orientation.Vertical;
-                tempSP.HorizontalAlignment = System.Windows.HorizontalAlignment.Center;
-                tempSP.VerticalAlignment = System.Windows.VerticalAlignment.Center;
-                tempSP.Margin = new Thickness(0, 0, 0, 20);
-                TextBlock tempTBName = new TextBlock();
-                tempTBName.HorizontalAlignment = System.Windows.HorizontalAlignment.Center;
-                tempTBName.VerticalAlignment = System.Windows.VerticalAlignment.Center;
-                tempTBName.FontSize = 24;
-                tempTBName.Text = tempName;
-                TextBlock tempTBPin = new TextBlock();
-                tempTBPin.HorizontalAlignment = System.Windows.HorizontalAlignment.Center;
-                tempTBPin.VerticalAlignment = System.Windows.VerticalAlignment.Center;
-                tempTBPin.FontSize = 32;
-                tempTBPin.Text = acct.CalculatePin();
-
-                if (GPinGenerator.numberSecondsLeft() <= 5)
-                {
-                    tempTBPin.Foreground = new SolidColorBrush(Colors.Red);
-                }
-                else
-                {
-                    tempTBPin.Foreground = new SolidColorBrush(Color.FromArgb(255, 55, 145, 200));
-                }
-                tempSP.Children.Add(tempTBName);
-                tempSP.Children.Add(tempTBPin);
-                //put new stackpanel in master stackpanel
-                SPAccounts.Children.Add(tempSP);
-                i++;
-
-            }
+            NavigationService.Navigate(new Uri("/AccountAddPage.xaml", UriKind.Relative));
         }
 
         public void StartTimer()
         {
             System.Windows.Threading.DispatcherTimer myDispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-            myDispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100); // 100 Milliseconds
+
+            myDispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             myDispatcherTimer.Tick += new EventHandler(Each_Tick);
             myDispatcherTimer.Start();
         }
 
-        // A variable to count with.
-        // Fires every 100 miliseconds while the DispatcherTimer is active.
         public void Each_Tick(object o, EventArgs sender)
         {
-            UpdateStackPanel();
-            UpdateProgressBar();
+            foreach (Account a in _application.Database.AccountList)
+            {
+                CodeGenerator cg = new CodeGenerator(6, 30);
+                string code = cg.computePin(a.SecretKey);
+
+                a.Code = code;
+            }
+
+            if (_application.Database.AccountList.Count > 0)
+            {
+                _progressIndicator.IsVisible = true;
+            }
+            else
+            {
+                _progressIndicator.IsVisible = false;
+            }
+
+            _progressIndicator.IsIndeterminate = false;
+            _progressIndicator.Value = CodeGenerator.numberSecondsLeft() / 30.0;
         }
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
+            if (_progressIndicator == null)
+            {
+                _progressIndicator = new ProgressIndicator();
+                SystemTray.SetProgressIndicator(this, _progressIndicator);
+            }
+            
             StartTimer();
         }
 
         private void btnRemoveAccount_Click(object sender, RoutedEventArgs e)
         {
             NavigationService.Navigate(new Uri("/RemoveAccount.xaml", UriKind.Relative));
-        }
-
-        private void UpdateProgressBar()
-        {
-            if (a.WorkingDB.Accounts.Count > 0)
-            {
-                pbTimeLeft.Visibility = System.Windows.Visibility.Visible;
-            }
-
-            else
-            {
-                pbTimeLeft.Visibility = System.Windows.Visibility.Collapsed;
-            }
-            pbTimeLeft.Value = GPinGenerator.numberSecondsLeft();
-            if (GPinGenerator.numberSecondsLeft() <= 5)
-            {
-                pbTimeLeft.Foreground = new SolidColorBrush(Colors.Red);
-            }
-            else
-            {
-                pbTimeLeft.Foreground = new SolidColorBrush(Color.FromArgb(255, 55, 145, 200));
-            }
         }
     }
 }

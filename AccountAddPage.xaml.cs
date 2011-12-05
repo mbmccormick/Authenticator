@@ -11,16 +11,18 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 
-namespace GAuthenticator
+namespace Authenticator
 {
-    public partial class AddAccount : PhoneApplicationPage
+    public partial class AccountAddPage : PhoneApplicationPage
     {
+        private Authenticator.App _application = null;
         bool newPageInstance = false;
-        private App a;
-        public AddAccount()
+        
+        public AccountAddPage()
         {
             InitializeComponent();
-            a = (App)Application.Current;
+
+            _application = (App)Application.Current;
             newPageInstance = true;
         }
 
@@ -36,14 +38,16 @@ namespace GAuthenticator
 
         private void BarcodeScanned(WP7_Barcode_Library.BarcodeCaptureResult e)
         {
-            //otpauth://totp/sample@gmail.com?secret=samplesample
+            // otpauth://totp/sample@gmail.com?secret=samplesample
             if (e.State == WP7_Barcode_Library.CaptureState.Success)
             {
                 string str = e.BarcodeText;
                 str = str.Replace("otpauth://totp/", "");
                 string[] splitString = str.Split(Convert.ToChar("?"));
                 splitString[1] = splitString[1].Replace("secret=", "");
+
                 AddToAccountDB(splitString[0], splitString[1]);
+
                 NavigationService.GoBack();
             }
         }
@@ -53,10 +57,11 @@ namespace GAuthenticator
             Account newAccount = new Account();
             newAccount.AccountName = Name;
             newAccount.SecretKey = Key;
-            a.WorkingDB.Accounts.Add(newAccount);
+
+            _application.Database.AccountList.Add(newAccount);
         }
 
-        private void btnDone_Click(object sender, RoutedEventArgs e)
+        private void btnAddAccount_Click(object sender, RoutedEventArgs e)
         {
             string tempName = txtAccountName.Text;
             string tempKey = txtSecretKey.Text;
@@ -64,6 +69,7 @@ namespace GAuthenticator
             {
                 AddToAccountDB(tempName, tempKey);
             }
+
             NavigationService.GoBack();
         }
 
@@ -74,13 +80,16 @@ namespace GAuthenticator
                 txtAccountName.Text = (string)State["txtAccountName"];
                 txtSecretKey.Text = (string)State["txtSecretKey"];
             }
+
             base.OnNavigatedTo(e);
         }
+
         protected override void OnNavigatedFrom(System.Windows.Navigation.NavigationEventArgs e)
         {
             newPageInstance = false;
             State["txtAccountName"] = txtAccountName.Text;
             State["txtSecretKey"] = txtSecretKey.Text;
+
             base.OnNavigatedFrom(e);
         }
     }

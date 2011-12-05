@@ -17,16 +17,18 @@ using System.IO;
 using System.Xml.Serialization;
 using System.Xml;
 
-namespace GAuthenticator
+namespace Authenticator
 {
     public partial class App : Application
     {
+        public Accounts Database { get; set; }        
+        
         /// <summary>
         /// Provides easy access to the root frame of the Phone Application.
         /// </summary>
         /// <returns>The root frame of the Phone Application.</returns>
         public PhoneApplicationFrame RootFrame { get; private set; }
-        public AccountDB WorkingDB { get; set; }
+        
         /// <summary>
         /// Constructor for the Application object.
         /// </summary>
@@ -55,13 +57,13 @@ namespace GAuthenticator
             // Phone-specific initialization
             InitializePhoneApplication();
 
-            this.WorkingDB = new AccountDB();
+            this.Database = new Accounts();
             IsolatedStorageFile iso = IsolatedStorageFile.GetUserStoreForApplication();
             if (iso.FileExists("AccountArchive.xml"))
             {
-                XmlSerializer xs = new XmlSerializer(typeof(AccountDB));
+                XmlSerializer xs = new XmlSerializer(typeof(Accounts));
                 StreamReader sr = new StreamReader(iso.OpenFile("AccountArchive.xml", FileMode.Open));
-                this.WorkingDB = (AccountDB)xs.Deserialize(sr);
+                this.Database = (Accounts)xs.Deserialize(sr);
             }
         }
 
@@ -77,7 +79,7 @@ namespace GAuthenticator
         {
             if (PhoneApplicationService.Current.State.ContainsKey("AccountDB"))
             {
-                this.WorkingDB = (AccountDB)PhoneApplicationService.Current.State["AccountDB"];
+                this.Database = (Accounts)PhoneApplicationService.Current.State["AccountDB"];
             }
         }
 
@@ -85,7 +87,7 @@ namespace GAuthenticator
         // This code will not execute when the application is closing
         private void Application_Deactivated(object sender, DeactivatedEventArgs e)
         {
-            PhoneApplicationService.Current.State["AccountDB"] = this.WorkingDB;
+            PhoneApplicationService.Current.State["AccountDB"] = this.Database;
         }
 
         // Code to execute when the application is closing (eg, user hit Back)
@@ -93,9 +95,9 @@ namespace GAuthenticator
         private void Application_Closing(object sender, ClosingEventArgs e)
         {
             System.IO.IsolatedStorage.IsolatedStorageFile iso = System.IO.IsolatedStorage.IsolatedStorageFile.GetUserStoreForApplication();
-            System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(AccountDB));
+            System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(Accounts));
             System.IO.StreamWriter sw = new System.IO.StreamWriter(iso.OpenFile("AccountArchive.xml", System.IO.FileMode.OpenOrCreate));
-            xs.Serialize(sw, this.WorkingDB);
+            xs.Serialize(sw, this.Database);
         }
 
         // Code to execute if a navigation fails

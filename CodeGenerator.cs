@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
-namespace GAuthenticator
+namespace Authenticator
 {
-    public class GPinGenerator
+    public class CodeGenerator
     {
         #region PrivateVars
 
@@ -26,7 +26,7 @@ namespace GAuthenticator
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public GPinGenerator()
+        public CodeGenerator()
         {
             pinCodeLength = 6;
             intervalLength = 30;
@@ -38,7 +38,7 @@ namespace GAuthenticator
         /// </summary>
         /// <param name="PinCodeLength">Number of digits in desired Pin Code</param>
         /// <param name="IntervalLength">Number of seconds to base Pin Code on</param>
-        public GPinGenerator(int PinCodeLength, int IntervalLength)
+        public CodeGenerator(int PinCodeLength, int IntervalLength)
         {
             pinCodeLength = PinCodeLength;
             intervalLength = IntervalLength;
