@@ -46,24 +46,24 @@ namespace Authenticator
 
         private void btnScanBarcode_Click(object sender, RoutedEventArgs e)
         {
-            //WP7_Barcode_Library.WP7BarcodeManager.ScanBarcode(BarcodeScanned);
+            WP7BarcodeManager.ScanBarcode(ScanBarcode_Completed);
         }
 
-        //private void BarcodeScanned(BarcodeCaptureResult e)
-        //{
-        //    //// otpauth://totp/sample@gmail.com?secret=samplesample
-        //    //if (e.State == WP7_Barcode_Library.CaptureState.Success)
-        //    //{
-        //    //    string str = e.BarcodeText;
-        //    //    str = str.Replace("otpauth://totp/", "");
-        //    //    string[] splitString = str.Split(Convert.ToChar("?"));
-        //    //    splitString[1] = splitString[1].Replace("secret=", "");
+        public void ScanBarcode_Completed(BarcodeCaptureResult e)
+        {
+            // otpauth://totp/sample@gmail.com?secret=samplesample
+            if (e.State == WP7_Barcode_Library.CaptureState.Success)
+            {
+                string str = e.BarcodeText;
+                str = str.Replace("otpauth://totp/", "");
+                string[] splitString = str.Split(Convert.ToChar("?"));
+                splitString[1] = splitString[1].Replace("secret=", "");
 
-        //    //    AddToAccountDB(splitString[0], splitString[1]);
+                AddToAccountDB(splitString[0], splitString[1]);
 
-        //    //    NavigationService.GoBack();
-        //    //}
-        //}        
+                NavigationService.GoBack();
+            }
+        }        
 
         private void AddToAccountDB(string Name, string Key)
         {
