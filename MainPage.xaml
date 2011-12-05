@@ -6,7 +6,7 @@
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
+    mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="696"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -31,24 +31,39 @@
             <TextBlock x:Name="PageTitle" Text="accounts" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
         </StackPanel>
 
-        <ListBox x:Name="lstAccounts" Grid.Row="1" Grid.ColumnSpan="2" Margin="12,0">
-            <ListBox.ItemTemplate>
+        <toolkit:MultiselectList x:Name="lstAccounts" Grid.Row="1" Grid.ColumnSpan="2" SelectionChanged="lstAccounts_SelectionChanged" IsSelectionEnabledChanged="lstAccounts_IsSelectionEnabledChanged">
+            <toolkit:MultiselectList.ItemContainerStyle>
+                <Style TargetType="toolkit:MultiselectItem">
+                    <Setter Property="HintPanelHeight" Value="90"/>
+                </Style>
+            </toolkit:MultiselectList.ItemContainerStyle>
+            <toolkit:MultiselectList.ItemTemplate>
                 <DataTemplate>
-                    <Grid x:Name="LayoutRoot" Background="Transparent" Margin="0,0,0,17" Width="432" Height="85">
+                    <Grid x:Name="LayoutRoot" Background="Transparent" Margin="-12,0,0,0" Tap="ItemContent_Tap">
                         <Grid.RowDefinitions>
                             <RowDefinition />
                             <RowDefinition />
                         </Grid.RowDefinitions>
                         <TextBlock Text="{Binding Path=AccountName}" Grid.Row="0" TextWrapping="NoWrap" Style="{StaticResource PhoneTextSubtleStyle}"/>
-                        <TextBlock Text="{Binding Path=Code}" Grid.Row="1" TextWrapping="NoWrap" Margin="12,-18,12,0" Style="{StaticResource PhoneTextExtraLargeStyle}" />
+                        <TextBlock Text="{Binding Path=Code}" Grid.Row="1" TextWrapping="NoWrap" Margin="12,-6,12,24" Style="{StaticResource PhoneTextExtraLargeStyle}" />
                     </Grid>
                 </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-
-        <Button Content="add" Name="btnAddAccount" Grid.Row="2" Grid.Column="0" Click="btnAddAccount_Click" />
-        <Button Content="remove" Name="btnRemoveAccount" Grid.Row="2" Grid.Column="1" Click="btnRemoveAccount_Click" />
+            </toolkit:MultiselectList.ItemTemplate>
+        </toolkit:MultiselectList>
     </Grid>
+    
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
+            <shell:ApplicationBarIconButton x:Name="appbar_button1" 
+                                            IconUri="/Resources/add.png" 
+                                            Text="add"
+                                            Click="add_Click"/>
+            <shell:ApplicationBarIconButton x:Name="appbar_button2" 
+                                            IconUri="/Resources/select.png" 
+                                            Text="select"
+                                            Click="select_Click"/>
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
 
     <toolkit:TransitionService.NavigationInTransition>
         <toolkit:NavigationInTransition>

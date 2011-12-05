@@ -10,15 +10,16 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
+using WP7_Barcode_Library;
 
 namespace Authenticator
 {
-    public partial class AccountAddPage : PhoneApplicationPage
+    public partial class AddPage : PhoneApplicationPage
     {
         private Authenticator.App _application = null;
         bool newPageInstance = false;
-        
-        public AccountAddPage()
+
+        public AddPage()
         {
             InitializeComponent();
 
@@ -26,42 +27,7 @@ namespace Authenticator
             newPageInstance = true;
         }
 
-        private void btnCancel_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationService.GoBack();
-        }
-
-        private void btnScanBarcode_Click(object sender, RoutedEventArgs e)
-        {
-            WP7_Barcode_Library.WP7BarcodeManager.ScanBarcode(BarcodeScanned);
-        }
-
-        private void BarcodeScanned(WP7_Barcode_Library.BarcodeCaptureResult e)
-        {
-            // otpauth://totp/sample@gmail.com?secret=samplesample
-            if (e.State == WP7_Barcode_Library.CaptureState.Success)
-            {
-                string str = e.BarcodeText;
-                str = str.Replace("otpauth://totp/", "");
-                string[] splitString = str.Split(Convert.ToChar("?"));
-                splitString[1] = splitString[1].Replace("secret=", "");
-
-                AddToAccountDB(splitString[0], splitString[1]);
-
-                NavigationService.GoBack();
-            }
-        }
-
-        private void AddToAccountDB(string Name, string Key)
-        {
-            Account newAccount = new Account();
-            newAccount.AccountName = Name;
-            newAccount.SecretKey = Key;
-
-            _application.Database.AccountList.Add(newAccount);
-        }
-
-        private void btnAddAccount_Click(object sender, RoutedEventArgs e)
+        private void add_Click(object sender, RoutedEventArgs e)
         {
             string tempName = txtAccountName.Text;
             string tempKey = txtSecretKey.Text;
@@ -71,6 +37,41 @@ namespace Authenticator
             }
 
             NavigationService.GoBack();
+        }
+
+        private void cancel_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.GoBack();
+        }
+
+        private void btnScanBarcode_Click(object sender, RoutedEventArgs e)
+        {
+            //WP7_Barcode_Library.WP7BarcodeManager.ScanBarcode(BarcodeScanned);
+        }
+
+        //private void BarcodeScanned(BarcodeCaptureResult e)
+        //{
+        //    //// otpauth://totp/sample@gmail.com?secret=samplesample
+        //    //if (e.State == WP7_Barcode_Library.CaptureState.Success)
+        //    //{
+        //    //    string str = e.BarcodeText;
+        //    //    str = str.Replace("otpauth://totp/", "");
+        //    //    string[] splitString = str.Split(Convert.ToChar("?"));
+        //    //    splitString[1] = splitString[1].Replace("secret=", "");
+
+        //    //    AddToAccountDB(splitString[0], splitString[1]);
+
+        //    //    NavigationService.GoBack();
+        //    //}
+        //}        
+
+        private void AddToAccountDB(string Name, string Key)
+        {
+            Account newAccount = new Account();
+            newAccount.AccountName = Name;
+            newAccount.SecretKey = Key;
+
+            _application.Database.Add(newAccount);
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)

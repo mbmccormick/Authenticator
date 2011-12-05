@@ -12,6 +12,8 @@ using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 
 using Microsoft.Phone.Shell;
+using System.Collections;
+using System.ComponentModel;
 
 namespace Authenticator
 {
@@ -19,36 +21,92 @@ namespace Authenticator
     {
         private Authenticator.App _application = null;
         private ProgressIndicator _progressIndicator = null;
-        
+
+        ApplicationBarIconButton add; 
+        ApplicationBarIconButton select;
+        ApplicationBarIconButton delete;
+
         // Constructor
         public MainPage()
         {
             InitializeComponent();
             _application = (Authenticator.App)Application.Current;
 
-            this.lstAccounts.ItemsSource = _application.Database.AccountList;
+            add = new ApplicationBarIconButton();
+            add.IconUri = new Uri("/Resources/add.png", UriKind.RelativeOrAbsolute);
+            add.Text = "add";
+            add.Click += add_Click; 
+            
+            select = new ApplicationBarIconButton();
+            select.IconUri = new Uri("/Resources/select.png", UriKind.RelativeOrAbsolute);
+            select.Text = "select";
+            select.Click += select_Click;
+
+            delete = new ApplicationBarIconButton();
+            delete.IconUri = new Uri("/Resources/delete.png", UriKind.RelativeOrAbsolute);
+            delete.Text = "delete";
+            delete.Click += delete_Click;
+
+            this.lstAccounts.ItemsSource = _application.Database;
 
             CodeGenerator.intervalLength = 30;
             CodeGenerator.pinCodeLength = 6;
         }
 
-        private void btnAddAccount_Click(object sender, RoutedEventArgs e)
+        private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new Uri("/AccountAddPage.xaml", UriKind.Relative));
+            if (_progressIndicator == null)
+            {
+                _progressIndicator = new ProgressIndicator();
+                SystemTray.SetProgressIndicator(this, _progressIndicator);
+            }
+
+            StartTimer();
         }
 
-        public void StartTimer()
+        protected override void OnBackKeyPress(CancelEventArgs e)
+        {
+            base.OnBackKeyPress(e);
+            if (this.lstAccounts.IsSelectionEnabled)
+            {
+                this.lstAccounts.IsSelectionEnabled = false;
+                e.Cancel = true;
+            }
+        }
+
+        private void add_Click(object sender, EventArgs e)
+        {
+            NavigationService.Navigate(new Uri("/AddPage.xaml", UriKind.Relative));
+        }
+
+        private void select_Click(object sender, EventArgs e)
+        {
+            this.lstAccounts.IsSelectionEnabled = true;
+        }
+
+        private void delete_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want to delete the selected account(s)?", "Delete", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            {
+                while (this.lstAccounts.SelectedItems.Count > 0)
+                {
+                    _application.Database.Remove((Account)this.lstAccounts.SelectedItems[0]);
+                }
+            }
+        }
+
+        private void StartTimer()
         {
             System.Windows.Threading.DispatcherTimer myDispatcherTimer = new System.Windows.Threading.DispatcherTimer();
 
             myDispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
-            myDispatcherTimer.Tick += new EventHandler(Each_Tick);
+            myDispatcherTimer.Tick += new EventHandler(Timer_Tick);
             myDispatcherTimer.Start();
         }
 
-        public void Each_Tick(object o, EventArgs sender)
+        private void Timer_Tick(object o, EventArgs sender)
         {
-            foreach (Account a in _application.Database.AccountList)
+            foreach (Account a in _application.Database)
             {
                 CodeGenerator cg = new CodeGenerator(6, 30);
                 string code = cg.computePin(a.SecretKey);
@@ -56,7 +114,7 @@ namespace Authenticator
                 a.Code = code;
             }
 
-            if (_application.Database.AccountList.Count > 0)
+            if (_application.Database.Count > 0)
             {
                 _progressIndicator.IsVisible = true;
             }
@@ -69,20 +127,64 @@ namespace Authenticator
             _progressIndicator.Value = CodeGenerator.numberSecondsLeft() / 30.0;
         }
 
-        private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
+        private void lstAccounts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (_progressIndicator == null)
+            MultiselectList target = (MultiselectList)sender;
+            ApplicationBarIconButton i = (ApplicationBarIconButton)ApplicationBar.Buttons[0];
+
+            if (target.IsSelectionEnabled)
             {
-                _progressIndicator = new ProgressIndicator();
-                SystemTray.SetProgressIndicator(this, _progressIndicator);
+                if (target.SelectedItems.Count > 0)
+                {
+                    i.IsEnabled = true;
+                }
+                else
+                {
+                    i.IsEnabled = false;
+                }
             }
-            
-            StartTimer();
+            else
+            {
+                i.IsEnabled = true;
+            }
         }
 
-        private void btnRemoveAccount_Click(object sender, RoutedEventArgs e)
+        private void lstAccounts_IsSelectionEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            NavigationService.Navigate(new Uri("/RemoveAccount.xaml", UriKind.Relative));
+            while (ApplicationBar.Buttons.Count > 0)
+            {
+                ApplicationBar.Buttons.RemoveAt(0);
+            }
+
+            while (ApplicationBar.MenuItems.Count > 0)
+            {
+                ApplicationBar.MenuItems.RemoveAt(0);
+            }
+
+            if ((bool)e.NewValue)
+            {
+                ApplicationBar.Buttons.Add(delete);
+                ApplicationBarIconButton i = (ApplicationBarIconButton)ApplicationBar.Buttons[0];
+                i.IsEnabled = false;
+            }
+            else
+            {
+                ApplicationBar.Buttons.Add(add);
+                ApplicationBar.Buttons.Add(select);
+            }
+        }
+
+        private void ItemContent_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            Account item = ((FrameworkElement)sender).DataContext as Account;
+            if (this.lstAccounts.IsSelectionEnabled)
+            {
+                MultiselectItem container = this.lstAccounts.ItemContainerGenerator.ContainerFromItem(item) as MultiselectItem;
+                if (container != null)
+                {
+                    container.IsSelected = !container.IsSelected;
+                }
+            }
         }
     }
 }

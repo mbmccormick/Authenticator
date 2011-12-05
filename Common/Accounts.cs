@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Authenticator
 {
-    public class Accounts
+    public class Accounts : ObservableCollection<Account>
     {
-        public List<Account> AccountList { get; set; }
-
         public Accounts()
+            : base()
         {
-            AccountList = new List<Account>();
         }
     }
 }
