@@ -35,8 +35,6 @@ namespace Authenticator
             {
                 AddToAccountDB(tempName, tempKey);
             }
-
-            NavigationService.GoBack();
         }
 
         private void cancel_Click(object sender, RoutedEventArgs e)
@@ -60,18 +58,33 @@ namespace Authenticator
                 splitString[1] = splitString[1].Replace("secret=", "");
 
                 AddToAccountDB(splitString[0], splitString[1]);
-
-                NavigationService.GoBack();
             }
-        }        
+            else
+            {
+                MessageBox.Show("The barcode for your account could not be read. Please try again.", "Error", MessageBoxButton.OK);
+            }
+        }
 
         private void AddToAccountDB(string Name, string Key)
         {
-            Account newAccount = new Account();
-            newAccount.AccountName = Name;
-            newAccount.SecretKey = Key;
+            Account a = new Account();
+            a.AccountName = Name;
+            a.SecretKey = Key;
 
-            _application.Database.Add(newAccount);
+            CodeGenerator cg = new CodeGenerator(6, 30);
+            string code = cg.computePin(a.SecretKey);
+
+            if (code == null || code.Length != 6)
+            {
+                MessageBox.Show("The Secret Key you provided could not be validated. Please check your input and try again.", "Error", MessageBoxButton.OK);
+                return;
+            }
+            else
+            {
+                _application.Database.Add(a);
+            }
+
+            NavigationService.GoBack();
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)

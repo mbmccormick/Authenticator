@@ -86,11 +86,24 @@ namespace Authenticator
 
         private void delete_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Are you sure you want to delete the selected account(s)?", "Delete", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            if (this.lstAccounts.SelectedItems.Count == 1)
             {
-                while (this.lstAccounts.SelectedItems.Count > 0)
+                if (MessageBox.Show("Are you sure you want to delete the selected account?", "Delete", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
                 {
-                    _application.Database.Remove((Account)this.lstAccounts.SelectedItems[0]);
+                    while (this.lstAccounts.SelectedItems.Count > 0)
+                    {
+                        _application.Database.Remove((Account)this.lstAccounts.SelectedItems[0]);
+                    }
+                }
+            }
+            else if (this.lstAccounts.SelectedItems.Count > 1)
+            {
+                if (MessageBox.Show("Are you sure you want to delete the selected accounts?", "Delete", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                {
+                    while (this.lstAccounts.SelectedItems.Count > 0)
+                    {
+                        _application.Database.Remove((Account)this.lstAccounts.SelectedItems[0]);
+                    }
                 }
             }
         }
