@@ -12,6 +12,7 @@
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480"
+    toolkit:TiltEffect.IsTiltEnabled="True"
     shell:SystemTray.IsVisible="True">
 
     <Grid x:Name="LayoutRoot" Background="Transparent">
@@ -48,5 +49,26 @@
         <Button Content="add" Name="btnAdd" Grid.Row="2" Grid.Column="0" Click="add_Click" />
         <Button Content="cancel" Name="btnCancel" Grid.Row="2" Grid.Column="1" Click="cancel_Click" />
     </Grid>
- 
+
+    <toolkit:TransitionService.NavigationInTransition>
+        <toolkit:NavigationInTransition>
+            <toolkit:NavigationInTransition.Backward>
+                <toolkit:TurnstileTransition Mode="BackwardIn"/>
+            </toolkit:NavigationInTransition.Backward>
+            <toolkit:NavigationInTransition.Forward>
+                <toolkit:TurnstileTransition Mode="ForwardIn"/>
+            </toolkit:NavigationInTransition.Forward>
+        </toolkit:NavigationInTransition>
+    </toolkit:TransitionService.NavigationInTransition>
+    <toolkit:TransitionService.NavigationOutTransition>
+        <toolkit:NavigationOutTransition>
+            <toolkit:NavigationOutTransition.Backward>
+                <toolkit:TurnstileTransition Mode="BackwardOut"/>
+            </toolkit:NavigationOutTransition.Backward>
+            <toolkit:NavigationOutTransition.Forward>
+                <toolkit:TurnstileTransition Mode="ForwardOut"/>
+            </toolkit:NavigationOutTransition.Forward>
+        </toolkit:NavigationOutTransition>
+    </toolkit:TransitionService.NavigationOutTransition>
+
 </phone:PhoneApplicationPage>
