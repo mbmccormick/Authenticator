@@ -47,14 +47,14 @@ namespace Authenticator
             delete.Text = "delete";
             delete.Click += delete_Click;
 
-            this.lstAccounts.ItemsSource = _application.Database;
-
             CodeGenerator.intervalLength = 30;
             CodeGenerator.pinCodeLength = 6;
         }
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
+            this.lstAccounts.ItemsSource = _application.Database; 
+            
             if (_progressIndicator == null)
             {
                 _progressIndicator = new ProgressIndicator();

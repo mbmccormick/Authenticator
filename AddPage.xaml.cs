@@ -44,6 +44,7 @@ namespace Authenticator
 
         private void btnScanBarcode_Click(object sender, RoutedEventArgs e)
         {
+            WP7BarcodeManager.ScanMode = com.google.zxing.BarcodeFormat.QR_CODE;
             WP7BarcodeManager.ScanBarcode(ScanBarcode_Completed);
         }
 
