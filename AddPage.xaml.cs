@@ -83,6 +83,7 @@ namespace Authenticator
             else
             {
                 _application.Database.Add(a);
+                _application.Application_Closing(null, null);
             }
 
             NavigationService.GoBack();

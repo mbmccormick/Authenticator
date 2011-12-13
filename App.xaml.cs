@@ -78,7 +78,7 @@ namespace Authenticator
 
         // Code to execute when the application is closing (eg, user hit Back)
         // This code will not execute when the application is deactivated
-        private void Application_Closing(object sender, ClosingEventArgs e)
+        public void Application_Closing(object sender, ClosingEventArgs e)
         {
             System.IO.IsolatedStorage.IsolatedStorageFile iso = System.IO.IsolatedStorage.IsolatedStorageFile.GetUserStoreForApplication();
             System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(Accounts));

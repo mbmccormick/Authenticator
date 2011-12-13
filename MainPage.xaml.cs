@@ -94,6 +94,8 @@ namespace Authenticator
                     {
                         _application.Database.Remove((Account)this.lstAccounts.SelectedItems[0]);
                     }
+
+                    _application.Application_Closing(null, null);
                 }
             }
             else if (this.lstAccounts.SelectedItems.Count > 1)
@@ -104,6 +106,8 @@ namespace Authenticator
                     {
                         _application.Database.Remove((Account)this.lstAccounts.SelectedItems[0]);
                     }
+
+                    _application.Application_Closing(null, null);
                 }
             }
         }

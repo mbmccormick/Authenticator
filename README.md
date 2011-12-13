@@ -4,5 +4,8 @@ Application Development by Matt McCormick
 Graphic Design by Libby Puccinelli  
   
   
+What's new in Version 1.1:  
+- Bug fix for accounts not saving  
+
 What's new in Version 1.0:  
 - Initial release  
