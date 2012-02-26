@@ -51,6 +51,8 @@
                 </DataTemplate>
             </toolkit:MultiselectList.ItemTemplate>
         </toolkit:MultiselectList>
+
+        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Margin="24,0,0,0" x:Name="txtEmpty" Text="You haven't set up any of your accounts yet." TextWrapping="Wrap" Style="{StaticResource PhoneTextLargeStyle}" Foreground="{StaticResource PhoneAccentBrush}" />
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>

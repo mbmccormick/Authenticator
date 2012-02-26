@@ -21,7 +21,8 @@ namespace Authenticator
 {
     public partial class App : Application
     {
-        public Accounts Database { get; set; }        
+        public Accounts Database { get; set; }
+        public bool DataCorruptionException { get; set; }
         
         /// <summary>
         /// Provides easy access to the root frame of the Phone Application.
@@ -44,12 +45,32 @@ namespace Authenticator
             InitializePhoneApplication();
 
             this.Database = new Accounts();
-            IsolatedStorageFile iso = IsolatedStorageFile.GetUserStoreForApplication();
-            if (iso.FileExists("AccountArchive.xml"))
+            StreamReader sr = null;
+
+            try
             {
-                XmlSerializer xs = new XmlSerializer(typeof(Accounts));
-                StreamReader sr = new StreamReader(iso.OpenFile("AccountArchive.xml", FileMode.Open));
-                this.Database = (Accounts)xs.Deserialize(sr);
+                IsolatedStorageFile iso = IsolatedStorageFile.GetUserStoreForApplication();
+                if (iso.FileExists("AccountArchive.xml"))
+                {
+                    XmlSerializer xs = new XmlSerializer(typeof(Accounts));
+                    sr = new StreamReader(iso.OpenFile("AccountArchive.xml", FileMode.Open));
+                    this.Database = (Accounts)xs.Deserialize(sr);
+                }
+            }
+            catch (Exception ex)
+            {
+                DataCorruptionException = true;
+
+                if (sr != null)
+                {
+                    sr.Close();
+                }
+
+                IsolatedStorageFile iso = IsolatedStorageFile.GetUserStoreForApplication();
+                if (iso.FileExists("AccountArchive.xml"))
+                {
+                    iso.DeleteFile("AccountArchive.xml");
+                }
             }
         }
 

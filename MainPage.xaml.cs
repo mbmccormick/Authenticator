@@ -53,8 +53,23 @@ namespace Authenticator
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
-            this.lstAccounts.ItemsSource = _application.Database; 
+            // check for unhandled exception
+            if (_application.DataCorruptionException == true)
+            {
+                _application.DataCorruptionException = false;
+                MessageBox.Show("Your account secrets were corrupted and your data has been lost. You may need to reconfigure your accounts on your phone.", "Error", MessageBoxButton.OK);
+            }
+
+            // bind display to database
+            this.lstAccounts.ItemsSource = _application.Database;
+
+            // toggle empty text display
+            if (_application.Database.Count == 0)
+                this.txtEmpty.Visibility = System.Windows.Visibility.Visible;
+            else
+                this.txtEmpty.Visibility = System.Windows.Visibility.Collapsed;
             
+            // create progress indicator
             if (_progressIndicator == null)
             {
                 _progressIndicator = new ProgressIndicator();
@@ -110,6 +125,12 @@ namespace Authenticator
                     _application.Application_Closing(null, null);
                 }
             }
+
+            // toggle empty text display
+            if (_application.Database.Count == 0)
+                this.txtEmpty.Visibility = System.Windows.Visibility.Visible;
+            else
+                this.txtEmpty.Visibility = System.Windows.Visibility.Collapsed;
         }
 
         private void StartTimer()
