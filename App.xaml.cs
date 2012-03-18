@@ -84,10 +84,7 @@ namespace Authenticator
         // This code will not execute when the application is first launched
         private void Application_Activated(object sender, ActivatedEventArgs e)
         {
-            if (PhoneApplicationService.Current.State.ContainsKey("AccountDB"))
-            {
-                this.Database = (Accounts)PhoneApplicationService.Current.State["AccountDB"];
-            }
+            
         }
 
         // Code to execute when the application is deactivated (sent to background)

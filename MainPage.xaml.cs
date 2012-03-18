@@ -149,7 +149,8 @@ namespace Authenticator
                 CodeGenerator cg = new CodeGenerator(6, 30);
                 string code = cg.computePin(a.SecretKey);
 
-                a.Code = code;
+                if (a.Code != code)
+                    a.Code = code;
             }
 
             if (_application.Database.Count > 0)
