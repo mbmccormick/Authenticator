@@ -50,7 +50,6 @@ namespace Authenticator
 
         public void ScanBarcode_Completed(BarcodeCaptureResult e)
         {
-            // otpauth://totp/sample@gmail.com?secret=samplesample
             if (e.State == WP7_Barcode_Library.CaptureState.Success)
             {
                 string str = e.BarcodeText;
@@ -58,7 +57,8 @@ namespace Authenticator
                 string[] splitString = str.Split(Convert.ToChar("?"));
                 splitString[1] = splitString[1].Replace("secret=", "");
 
-                AddToAccountDB(splitString[0], splitString[1]);
+                txtAccountName.Text = splitString[0];
+                txtSecretKey.Text = splitString[1];
             }
             else
             {
