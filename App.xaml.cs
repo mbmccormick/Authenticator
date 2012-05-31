@@ -53,8 +53,10 @@ namespace Authenticator
                 if (iso.FileExists("AccountArchive.xml"))
                 {
                     XmlSerializer xs = new XmlSerializer(typeof(Accounts));
-                    sr = new StreamReader(iso.OpenFile("AccountArchive.xml", FileMode.Open));
-                    this.Database = (Accounts)xs.Deserialize(sr);
+                    using (sr = new StreamReader(iso.OpenFile("AccountArchive.xml", FileMode.Open)))
+                    {
+                        this.Database = (Accounts)xs.Deserialize(sr);
+                    }
                 }
             }
             catch (Exception ex)
@@ -98,10 +100,16 @@ namespace Authenticator
         // This code will not execute when the application is deactivated
         public void Application_Closing(object sender, ClosingEventArgs e)
         {
-            System.IO.IsolatedStorage.IsolatedStorageFile iso = System.IO.IsolatedStorage.IsolatedStorageFile.GetUserStoreForApplication();
-            System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(Accounts));
-            System.IO.StreamWriter sw = new System.IO.StreamWriter(iso.OpenFile("AccountArchive.xml", System.IO.FileMode.OpenOrCreate));
-            xs.Serialize(sw, this.Database);
+            using (var iso = IsolatedStorageFile.GetUserStoreForApplication())
+            {
+                var xs = new XmlSerializer(typeof(Accounts));
+                var stream = iso.OpenFile("AccountArchive.xml", FileMode.Create);
+                using (var sw = new StreamWriter(stream))
+                {
+                    xs.Serialize(sw, this.Database);
+                    sw.Flush();
+                }
+            }
         }
 
         // Code to execute if a navigation fails
