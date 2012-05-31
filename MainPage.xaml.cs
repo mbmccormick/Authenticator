@@ -150,7 +150,10 @@ namespace Authenticator
                 string code = cg.computePin(a.SecretKey);
 
                 if (a.Code != code)
+                {
                     a.Code = code;
+                    a.Message = null;
+                }
             }
 
             if (_application.Database.Count > 0)
@@ -223,6 +226,14 @@ namespace Authenticator
                 {
                     container.IsSelected = !container.IsSelected;
                 }
+            }
+            else
+            {
+                foreach (var account in _application.Database)
+                    account.Message = null;
+
+                Clipboard.SetText(item.Code);
+                item.Message = "Copied to clipboard.";
             }
         }
     }

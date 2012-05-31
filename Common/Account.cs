@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Media;
 using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace Authenticator
 {
@@ -21,6 +22,22 @@ namespace Authenticator
             {
                 _Code = value;
                 NotifyPropertyChanged("Code");
+            }
+        }
+
+        private string _Message;
+
+        [XmlIgnore]
+        public string Message
+        {
+            get
+            {
+                return _Message;
+            }
+            set
+            {
+                _Message = value;
+                NotifyPropertyChanged("Message");
             }
         }
 
