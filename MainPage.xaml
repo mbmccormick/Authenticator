@@ -31,17 +31,13 @@
         <toolkit:MultiselectList x:Name="lstAccounts" Grid.Row="1" SelectionChanged="lstAccounts_SelectionChanged" IsSelectionEnabledChanged="lstAccounts_IsSelectionEnabledChanged">
             <toolkit:MultiselectList.ItemTemplate>
                 <DataTemplate>
-                    <Grid x:Name="LayoutRoot" Background="Transparent" Margin="-12,0,0,0" Tap="ItemContent_Tap">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="{Binding Path=AccountName}" Grid.Row="0" TextWrapping="NoWrap" Style="{StaticResource PhoneTextSubtleStyle}"/>
-                        <StackPanel Orientation="Horizontal" Grid.Row="1">
+                    <StackPanel x:Name="LayoutRoot" Background="Transparent" Margin="-12,0,0,0" Tap="ItemContent_Tap">
+                        <TextBlock Text="{Binding Path=AccountName}" TextWrapping="NoWrap" Style="{StaticResource PhoneTextSubtleStyle}"/>
+                        <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding Path=Code}" Margin="12,-6,12,24" TextWrapping="NoWrap" Style="{StaticResource PhoneTextExtraLargeStyle}" />
                             <TextBlock Text="{Binding Path=Message}" Margin="12,-6,12,24" TextWrapping="NoWrap" Style="{StaticResource PhoneTextSubtleStyle}" VerticalAlignment="Center"/>
                         </StackPanel>
-                    </Grid>
+                    </StackPanel>
                 </DataTemplate>
             </toolkit:MultiselectList.ItemTemplate>
         </toolkit:MultiselectList>

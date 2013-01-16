@@ -37,6 +37,8 @@ namespace Authenticator
             InitializeComponent();
             _application = (App)Application.Current;
 
+            TiltEffect.TiltableItems.Add(typeof(MultiselectItem));
+
             this.BuildApplicationBar();
 
             CodeGenerator.intervalLength = 30;
