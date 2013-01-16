@@ -25,22 +25,6 @@ namespace Authenticator
             }
         }
 
-        private string _Message;
-
-        [XmlIgnore]
-        public string Message
-        {
-            get
-            {
-                return _Message;
-            }
-            set
-            {
-                _Message = value;
-                NotifyPropertyChanged("Message");
-            }
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged(String propertyName)
         {

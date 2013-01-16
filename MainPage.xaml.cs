@@ -221,6 +221,9 @@ namespace Authenticator
             {
                 ApplicationBar.Buttons.Add(add);
                 ApplicationBar.Buttons.Add(select);
+
+                ApplicationBar.MenuItems.Add(about);
+                ApplicationBar.MenuItems.Add(donate);
             }
         }
 
@@ -235,13 +238,45 @@ namespace Authenticator
                     container.IsSelected = !container.IsSelected;
                 }
             }
-            else
-            {
-                foreach (var account in _application.Database)
-                    account.Message = null;
+        }
 
-                Clipboard.SetText(item.Code);
-                item.Message = "Copied to clipboard.";
+        private Account MostRecentAccountClick
+        {
+            get;
+            set;
+        }
+
+        protected override void OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.OriginalSource is FrameworkElement)
+            {
+                FrameworkElement frameworkElement = (FrameworkElement)e.OriginalSource;
+                if (frameworkElement.DataContext is Account)
+                {
+                    MostRecentAccountClick = (Account)frameworkElement.DataContext;
+                }
+            }
+
+            base.OnMouseLeftButtonDown(e);
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem target = (MenuItem)sender;
+            ContextMenu parent = (ContextMenu)target.Parent;
+
+            if (target.Header.ToString() == "copy")
+            {
+                Clipboard.SetText(MostRecentAccountClick.Code);
+            }
+            else if (target.Header.ToString() == "delete")
+            {
+                if (MessageBox.Show("Are you sure you want to delete the selected account?", "Delete", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                {
+                    _application.Database.Remove(MostRecentAccountClick);
+                    
+                    _application.Application_Closing(null, null);
+                }
             }
         }
 
@@ -268,7 +303,6 @@ namespace Authenticator
                 if (a.Code != code)
                 {
                     a.Code = code;
-                    a.Message = null;
                 }
             }
 

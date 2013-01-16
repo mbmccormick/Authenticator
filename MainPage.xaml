@@ -22,7 +22,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
+
         <StackPanel x:Name="TitlePanel" Margin="12,17,0,28">
             <TextBlock x:Name="ApplicationTitle" Text="AUTHENTICATOR" Style="{StaticResource PhoneTextNormalStyle}" FontSize="{StaticResource PhoneFontSizeMedium}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" />
             <TextBlock x:Name="PageTitle" Text="accounts" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
@@ -33,10 +33,14 @@
                 <DataTemplate>
                     <StackPanel x:Name="LayoutRoot" Background="Transparent" Margin="-12,0,0,0" Tap="ItemContent_Tap">
                         <TextBlock Text="{Binding Path=AccountName}" TextWrapping="NoWrap" Style="{StaticResource PhoneTextSubtleStyle}"/>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Path=Code}" Margin="12,-6,12,24" TextWrapping="NoWrap" Style="{StaticResource PhoneTextExtraLargeStyle}" />
-                            <TextBlock Text="{Binding Path=Message}" Margin="12,-6,12,24" TextWrapping="NoWrap" Style="{StaticResource PhoneTextSubtleStyle}" VerticalAlignment="Center"/>
-                        </StackPanel>
+                        <TextBlock Text="{Binding Path=Code}" Margin="12,-6,12,24" TextWrapping="NoWrap" Style="{StaticResource PhoneTextExtraLargeStyle}" />
+
+                        <toolkit:ContextMenuService.ContextMenu>
+                            <toolkit:ContextMenu>
+                                <toolkit:MenuItem Header="copy" Click="MenuItem_Click" />
+                                <toolkit:MenuItem Header="delete" Click="MenuItem_Click" />
+                            </toolkit:ContextMenu>
+                        </toolkit:ContextMenuService.ContextMenu>
                     </StackPanel>
                 </DataTemplate>
             </toolkit:MultiselectList.ItemTemplate>
