@@ -4,9 +4,9 @@ using System.Collections.ObjectModel;
 
 namespace Authenticator
 {
-    public class Accounts : ObservableCollection<Account>
+    public class AccountList : ObservableCollection<Account>
     {
-        public Accounts()
+        public AccountList()
             : base()
         {
         }

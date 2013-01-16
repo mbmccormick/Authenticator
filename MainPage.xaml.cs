@@ -14,41 +14,66 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using System.Collections;
 using System.ComponentModel;
+using Microsoft.Phone.Tasks;
 
 namespace Authenticator
 {
     public partial class MainPage : PhoneApplicationPage
     {
-        private Authenticator.App _application = null;
+        private App _application = null;
         private ProgressIndicator _progressIndicator = null;
 
-        ApplicationBarIconButton add; 
+        #region Construction and Navigation
+
+        ApplicationBarIconButton add;
         ApplicationBarIconButton select;
         ApplicationBarIconButton delete;
 
-        // Constructor
+        ApplicationBarMenuItem about;
+        ApplicationBarMenuItem donate;
+
         public MainPage()
         {
             InitializeComponent();
-            _application = (Authenticator.App)Application.Current;
+            _application = (App)Application.Current;
 
-            add = new ApplicationBarIconButton();
-            add.IconUri = new Uri("/Resources/add.png", UriKind.RelativeOrAbsolute);
-            add.Text = "add";
-            add.Click += add_Click; 
-            
-            select = new ApplicationBarIconButton();
-            select.IconUri = new Uri("/Resources/select.png", UriKind.RelativeOrAbsolute);
-            select.Text = "select";
-            select.Click += select_Click;
-
-            delete = new ApplicationBarIconButton();
-            delete.IconUri = new Uri("/Resources/delete.png", UriKind.RelativeOrAbsolute);
-            delete.Text = "delete";
-            delete.Click += delete_Click;
+            this.BuildApplicationBar();
 
             CodeGenerator.intervalLength = 30;
             CodeGenerator.pinCodeLength = 6;
+        }
+
+        private void BuildApplicationBar()
+        {
+            add = new ApplicationBarIconButton();
+            add.IconUri = new Uri("/Toolkit.Content/ApplicationBar.Add.png", UriKind.RelativeOrAbsolute);
+            add.Text = "add";
+            add.Click += btnAdd_Click;
+
+            select = new ApplicationBarIconButton();
+            select.IconUri = new Uri("/Toolkit.Content/ApplicationBar.Select.png", UriKind.RelativeOrAbsolute);
+            select.Text = "select";
+            select.Click += btnSelect_Click;
+
+            delete = new ApplicationBarIconButton();
+            delete.IconUri = new Uri("/Toolkit.Content/ApplicationBar.Delete.png", UriKind.RelativeOrAbsolute);
+            delete.Text = "delete";
+            delete.Click += btnDelete_Click;
+
+            about = new ApplicationBarMenuItem();
+            about.Text = "about authenticator";
+            about.Click += mnuAbout_Click;
+
+            donate = new ApplicationBarMenuItem();
+            donate.Text = "donate";
+            donate.Click += mnuDonate_Click;
+
+            // build application bar
+            ApplicationBar.Buttons.Add(add);
+            ApplicationBar.Buttons.Add(select);
+
+            ApplicationBar.MenuItems.Add(about);
+            ApplicationBar.MenuItems.Add(donate);
         }
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
@@ -68,7 +93,7 @@ namespace Authenticator
                 this.txtEmpty.Visibility = System.Windows.Visibility.Visible;
             else
                 this.txtEmpty.Visibility = System.Windows.Visibility.Collapsed;
-            
+
             // create progress indicator
             if (_progressIndicator == null)
             {
@@ -89,17 +114,34 @@ namespace Authenticator
             }
         }
 
-        private void add_Click(object sender, EventArgs e)
+        #endregion
+
+        #region Event Handlers
+
+        private void mnuAbout_Click(object sender, EventArgs e)
         {
-            NavigationService.Navigate(new Uri("/AddPage.xaml", UriKind.Relative));
+            NavigationService.Navigate(new Uri("/YourLastAboutDialog;component/AboutPage.xaml", UriKind.Relative));
+        }
+        
+        private void mnuDonate_Click(object sender, EventArgs e)
+        {
+            WebBrowserTask webBrowserTask = new WebBrowserTask();
+
+            webBrowserTask.Uri = new Uri("http://mbmccormick.com/donate/", UriKind.Absolute);
+            webBrowserTask.Show();
         }
 
-        private void select_Click(object sender, EventArgs e)
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            NavigationService.Navigate(new Uri("/AddAccountPage.xaml", UriKind.Relative));
+        }
+
+        private void btnSelect_Click(object sender, EventArgs e)
         {
             this.lstAccounts.IsSelectionEnabled = true;
         }
 
-        private void delete_Click(object sender, EventArgs e)
+        private void btnDelete_Click(object sender, EventArgs e)
         {
             if (this.lstAccounts.SelectedItems.Count == 1)
             {
@@ -131,42 +173,6 @@ namespace Authenticator
                 this.txtEmpty.Visibility = System.Windows.Visibility.Visible;
             else
                 this.txtEmpty.Visibility = System.Windows.Visibility.Collapsed;
-        }
-
-        private void StartTimer()
-        {
-            System.Windows.Threading.DispatcherTimer myDispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-
-            myDispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
-            myDispatcherTimer.Tick += new EventHandler(Timer_Tick);
-            myDispatcherTimer.Start();
-        }
-
-        private void Timer_Tick(object o, EventArgs sender)
-        {
-            foreach (Account a in _application.Database)
-            {
-                CodeGenerator cg = new CodeGenerator(6, 30);
-                string code = cg.computePin(a.SecretKey);
-
-                if (a.Code != code)
-                {
-                    a.Code = code;
-                    a.Message = null;
-                }
-            }
-
-            if (_application.Database.Count > 0)
-            {
-                _progressIndicator.IsVisible = true;
-            }
-            else
-            {
-                _progressIndicator.IsVisible = false;
-            }
-
-            _progressIndicator.IsIndeterminate = false;
-            _progressIndicator.Value = CodeGenerator.numberSecondsLeft() / 30.0;
         }
 
         private void lstAccounts_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -236,5 +242,47 @@ namespace Authenticator
                 item.Message = "Copied to clipboard.";
             }
         }
+
+        #endregion
+
+        #region Timer Methods
+
+        private void StartTimer()
+        {
+            System.Windows.Threading.DispatcherTimer myDispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+
+            myDispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+            myDispatcherTimer.Tick += new EventHandler(Timer_Tick);
+            myDispatcherTimer.Start();
+        }
+
+        private void Timer_Tick(object o, EventArgs sender)
+        {
+            foreach (Account a in _application.Database)
+            {
+                CodeGenerator cg = new CodeGenerator(6, 30);
+                string code = cg.computePin(a.SecretKey);
+
+                if (a.Code != code)
+                {
+                    a.Code = code;
+                    a.Message = null;
+                }
+            }
+
+            if (_application.Database.Count > 0)
+            {
+                _progressIndicator.IsVisible = true;
+            }
+            else
+            {
+                _progressIndicator.IsVisible = false;
+            }
+
+            _progressIndicator.IsIndeterminate = false;
+            _progressIndicator.Value = CodeGenerator.numberSecondsLeft() / 30.0;
+        }
+
+        #endregion
     }
 }

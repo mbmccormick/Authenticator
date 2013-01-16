@@ -73,11 +73,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddPage.xaml.cs">
-      <DependentUpon>AddPage.xaml</DependentUpon>
+    <Compile Include="AddAccountPage.xaml.cs">
+      <DependentUpon>AddAccountPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\Account.cs" />
-    <Compile Include="Common\Accounts.cs" />
+    <Compile Include="Common\AccountList.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -92,7 +92,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
-    <Page Include="AddPage.xaml">
+    <Page Include="AddAccountPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

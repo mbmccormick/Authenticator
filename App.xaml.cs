@@ -21,7 +21,7 @@ namespace Authenticator
 {
     public partial class App : Application
     {
-        public Accounts Database { get; set; }
+        public AccountList Database { get; set; }
         public bool DataCorruptionException { get; set; }
         
         /// <summary>
@@ -44,7 +44,7 @@ namespace Authenticator
             // Phone-specific initialization
             InitializePhoneApplication();
 
-            this.Database = new Accounts();
+            this.Database = new AccountList();
             StreamReader sr = null;
 
             try
@@ -52,10 +52,10 @@ namespace Authenticator
                 IsolatedStorageFile iso = IsolatedStorageFile.GetUserStoreForApplication();
                 if (iso.FileExists("AccountArchive.xml"))
                 {
-                    XmlSerializer xs = new XmlSerializer(typeof(Accounts));
+                    XmlSerializer xs = new XmlSerializer(typeof(AccountList));
                     using (sr = new StreamReader(iso.OpenFile("AccountArchive.xml", FileMode.Open)))
                     {
-                        this.Database = (Accounts)xs.Deserialize(sr);
+                        this.Database = (AccountList)xs.Deserialize(sr);
                     }
                 }
             }
@@ -102,7 +102,7 @@ namespace Authenticator
         {
             using (var iso = IsolatedStorageFile.GetUserStoreForApplication())
             {
-                var xs = new XmlSerializer(typeof(Accounts));
+                var xs = new XmlSerializer(typeof(AccountList));
                 var stream = iso.OpenFile("AccountArchive.xml", FileMode.Create);
                 using (var sw = new StreamWriter(stream))
                 {

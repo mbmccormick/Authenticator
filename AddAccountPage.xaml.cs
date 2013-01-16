@@ -11,23 +11,72 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using WP7_Barcode_Library;
+using Microsoft.Phone.Shell;
 
 namespace Authenticator
 {
-    public partial class AddPage : PhoneApplicationPage
+    public partial class AddAccountPage : PhoneApplicationPage
     {
-        private Authenticator.App _application = null;
+        private App _application = null;
         bool newPageInstance = false;
 
-        public AddPage()
+        #region Construction and Navigation
+
+        ApplicationBarIconButton save;
+        ApplicationBarIconButton cancel;
+
+        public AddAccountPage()
         {
             InitializeComponent();
-
             _application = (App)Application.Current;
+
+            this.BuildApplicationBar();
+
             newPageInstance = true;
         }
 
-        private void add_Click(object sender, RoutedEventArgs e)
+        private void BuildApplicationBar()
+        {
+            save = new ApplicationBarIconButton();
+            save.IconUri = new Uri("/Toolkit.Content/ApplicationBar.Check.png", UriKind.RelativeOrAbsolute);
+            save.Text = "save";
+            save.Click += btnSave_Click;
+
+            cancel = new ApplicationBarIconButton();
+            cancel.IconUri = new Uri("/Toolkit.Content/ApplicationBar.Cancel.png", UriKind.RelativeOrAbsolute);
+            cancel.Text = "cancel";
+            cancel.Click += btnCancel_Click;
+
+            // build application bar
+            ApplicationBar.Buttons.Add(save);
+            ApplicationBar.Buttons.Add(cancel);
+        }
+
+        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
+        {
+            if (State.ContainsKey("txtAccountName") && newPageInstance == true)
+            {
+                txtAccountName.Text = (string)State["txtAccountName"];
+                txtSecretKey.Text = (string)State["txtSecretKey"];
+            }
+
+            base.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatedFrom(System.Windows.Navigation.NavigationEventArgs e)
+        {
+            newPageInstance = false;
+            State["txtAccountName"] = txtAccountName.Text;
+            State["txtSecretKey"] = txtSecretKey.Text;
+
+            base.OnNavigatedFrom(e);
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        private void btnSave_Click(object sender, EventArgs e)
         {
             string tempName = txtAccountName.Text;
             string tempKey = txtSecretKey.Text;
@@ -37,7 +86,7 @@ namespace Authenticator
             }
         }
 
-        private void cancel_Click(object sender, RoutedEventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             NavigationService.GoBack();
         }
@@ -66,6 +115,10 @@ namespace Authenticator
             }
         }
 
+        #endregion
+
+        #region Account Methods
+        
         private void AddToAccountDB(string Name, string Key)
         {
             Account a = new Account();
@@ -89,24 +142,6 @@ namespace Authenticator
             NavigationService.GoBack();
         }
 
-        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
-        {
-            if (State.ContainsKey("txtAccountName") && newPageInstance == true)
-            {
-                txtAccountName.Text = (string)State["txtAccountName"];
-                txtSecretKey.Text = (string)State["txtSecretKey"];
-            }
-
-            base.OnNavigatedTo(e);
-        }
-
-        protected override void OnNavigatedFrom(System.Windows.Navigation.NavigationEventArgs e)
-        {
-            newPageInstance = false;
-            State["txtAccountName"] = txtAccountName.Text;
-            State["txtSecretKey"] = txtSecretKey.Text;
-
-            base.OnNavigatedFrom(e);
-        }
+        #endregion
     }
 }
