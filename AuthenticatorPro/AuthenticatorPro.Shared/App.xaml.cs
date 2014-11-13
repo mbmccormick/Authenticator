@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.Phone.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
@@ -19,15 +20,19 @@ namespace AuthenticatorPro
         public static bool AutomaticTimeCorrection;
 
         public static List<Account> Accounts;
-        
+
         public static TimeSpan NtpTimeOffset;
 
         public static string BarcodeScannerResult;
-        
+
         public App()
         {
             this.InitializeComponent();
             this.Suspending += this.OnSuspending;
+
+#if WINDOWS_PHONE_APP
+            HardwareButtons.BackPressed += HardwareButtons_BackPressed;
+#endif
         }
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
@@ -38,7 +43,7 @@ namespace AuthenticatorPro
                 this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
-            
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
@@ -96,6 +101,23 @@ namespace AuthenticatorPro
             var rootFrame = sender as Frame;
             rootFrame.ContentTransitions = this.transitions ?? new TransitionCollection() { new NavigationThemeTransition() };
             rootFrame.Navigated -= this.RootFrame_FirstNavigated;
+        }
+#endif
+
+#if WINDOWS_PHONE_APP
+        private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+
+            if (rootFrame != null && rootFrame.CanGoBack)
+            {
+                e.Handled = true;
+                rootFrame.GoBack();
+            }
+            else
+            {
+                Application.Current.Exit();
+            }
         }
 #endif
 

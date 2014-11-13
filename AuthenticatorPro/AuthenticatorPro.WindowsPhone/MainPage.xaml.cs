@@ -1,26 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.Security.Credentials;
 
 namespace AuthenticatorPro
 {
     public sealed partial class MainPage : Page
     {
         public static ObservableCollection<Account> Accounts { get; set; }
+
+        DispatcherTimer dispatcherTimer;
 
         public MainPage()
         {
@@ -46,6 +38,10 @@ namespace AuthenticatorPro
                 else
                     App.RoamAccountSecrets = true;
             }
+            else
+            {
+                App.RoamAccountSecrets = true;
+            }
 
             if (ApplicationData.Current.RoamingSettings.Values.ContainsKey("AutomaticTimeCorrection"))
             {
@@ -55,6 +51,10 @@ namespace AuthenticatorPro
                     App.AutomaticTimeCorrection = value.Value;
                 else
                     App.AutomaticTimeCorrection = true;
+            }
+            else
+            {
+                App.AutomaticTimeCorrection = true;
             }
 
             App.Accounts = new List<Account>();
@@ -69,11 +69,14 @@ namespace AuthenticatorPro
 
         private void LoadData()
         {
-            DispatcherTimer dt = new DispatcherTimer();
-            dt.Interval = new TimeSpan(0, 0, 0, 0, 5);
-            dt.Tick += DispatchTimer_Tick;
+            if (dispatcherTimer == null)
+            {
+                dispatcherTimer = new DispatcherTimer();
+                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 5);
+                dispatcherTimer.Tick += DispatcherTimer_Tick;
 
-            dt.Start();
+                dispatcherTimer.Start();
+            }
 
             Accounts = new ObservableCollection<Account>();
 
@@ -94,7 +97,7 @@ namespace AuthenticatorPro
             }
         }
 
-        private void DispatchTimer_Tick(object sender, object e)
+        private void DispatcherTimer_Tick(object sender, object e)
         {
             this.prgStatusBar.Value = CodeGenerator.TimeElapsed() * 100.0;
 
@@ -112,6 +115,22 @@ namespace AuthenticatorPro
         private void btnSettings_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsPage));
+        }
+
+        private void btnCopyToClipboard_Click(object sender, RoutedEventArgs e)
+        {
+            Account item = ((FrameworkElement)sender).DataContext as Account;
+
+            // TODO: implement clipboard functionality
+        }
+
+        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        {
+            Account item = ((FrameworkElement)sender).DataContext as Account;
+
+            App.Accounts.Remove(item);
+
+            LoadData();
         }
     }
 }

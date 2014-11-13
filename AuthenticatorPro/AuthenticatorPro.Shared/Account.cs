@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 
 namespace AuthenticatorPro
 {
@@ -15,7 +13,10 @@ namespace AuthenticatorPro
         {
             get
             {
-                return _Code;
+                if (_Code != null)
+                    return _Code.ToString().PadLeft(6, '0');
+                else
+                    return _Code;
             }
         }
 

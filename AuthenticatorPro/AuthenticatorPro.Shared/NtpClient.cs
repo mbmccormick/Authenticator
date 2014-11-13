@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Windows.Networking;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;

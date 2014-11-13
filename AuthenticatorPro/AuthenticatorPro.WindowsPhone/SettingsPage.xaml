@@ -33,7 +33,7 @@
             <TextBlock Text="Account secrets roaming will sync your account secrets between trusted devices that you have logged into with your Microsoft Account." Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,12" />
 
             <ToggleSwitch x:Name="togAutomaticTimeCorrection" Header="Automatic time correction" OnContent="On" OffContent="Off" IsOn="True" Margin="0,24,0,0" />
-            <TextBlock Text="Automatic time correction uses worldwide network time servers to correct for the time inaccuracy of your device's internal clock. This helps generate correct time-based security codes." Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,12" />
+            <TextBlock Text="Automatic time correction uses Microsoft time servers to correct for the time inaccuracy of your device's internal clock. This helps generate correct time-based security codes." Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,12" />
 
             <TextBlock x:Name="txtDrift" Text="Your device is currently behind by 00:00:00 (hh:mm:ss)." Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,12" />
 

@@ -8,6 +8,19 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    
+    <Page.Resources>
+        <MenuFlyout x:Key="flyContextMenu">
+            <MenuFlyout.MenuFlyoutPresenterStyle>
+                <Style TargetType="MenuFlyoutPresenter">
+                    <Setter Property="BorderBrush" Value="CornflowerBlue"/>
+                    <Setter Property="BorderThickness" Value="5"/>
+                </Style>
+            </MenuFlyout.MenuFlyoutPresenterStyle>
+            <MenuFlyoutItem Text="copy to clipboard" DataContext="{Binding}" Click="btnCopyToClipboard_Click"/>
+            <MenuFlyoutItem Text="delete" DataContext="{Binding}" Click="btnDelete_Click"/>
+        </MenuFlyout>
+    </Page.Resources>
 
     <Grid x:Name="LayoutRoot">
 
@@ -36,18 +49,18 @@
             <ListView x:Name="lstAccounts" ItemsSource="{Binding Accounts}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        
-                        <StackPanel Margin="0,0,0,12">
+
+                        <StackPanel Margin="0,0,0,12" FlyoutBase.AttachedFlyout="{StaticResource flyContextMenu}">
                             <TextBlock Text="{Binding Code}" Style="{ThemeResource HeaderTextBlockStyle}" FontSize="48" />
                             <TextBlock Text="{Binding Name}" Style="{ThemeResource SubheaderTextBlockStyle}" FontSize="18" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" />
                         </StackPanel>
-                        
+
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
 
         </StackPanel>
-        
+
     </Grid>
 
     <Page.BottomAppBar>

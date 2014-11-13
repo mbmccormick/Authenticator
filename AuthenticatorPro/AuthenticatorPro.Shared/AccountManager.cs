@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Windows.Security.Credentials;
+﻿using Windows.Security.Credentials;
 using Windows.Storage;
 
 namespace AuthenticatorPro

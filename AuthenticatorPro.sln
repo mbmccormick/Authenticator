@@ -15,6 +15,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Albireo.Base32", "Albireo.B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Albireo.Otp", "Albireo.Otp\Albireo.Otp.csproj", "{711EA10D-3A58-4AE6-AE55-3C4908A55312}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{09AD7BE6-3DFF-4419-8905-D31E6F2FF9CC}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		AuthenticatorPro\AuthenticatorPro.Shared\AuthenticatorPro.Shared.projitems*{666e0334-b215-49bd-9e2f-78ce8443e8ff}*SharedItemsImports = 4
