@@ -133,7 +133,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\otp\Albireo.Otp\Albireo.Otp.csproj">
+    <ProjectReference Include="..\..\Albireo.Otp\Albireo.Otp.csproj">
       <Project>{711ea10d-3a58-4ae6-ae55-3c4908a55312}</Project>
       <Name>Albireo.Otp</Name>
     </ProjectReference>
