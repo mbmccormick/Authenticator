@@ -5,6 +5,7 @@ using Windows.Media.Capture;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
@@ -15,6 +16,8 @@ namespace AuthenticatorPro
 {
     public sealed partial class ScanPage : Page
     {
+        DispatcherTimer dispatcherTimer;
+
         MediaCapture captureManager;
         BarcodeReader reader;
         Result scanResult;
@@ -32,6 +35,13 @@ namespace AuthenticatorPro
             PreviewCameraFeed();
         }
 
+        protected override async void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            dispatcherTimer.Stop();
+
+            await captureManager.StopPreviewAsync();
+        }
+
         private async void PreviewCameraFeed()
         {
             try
@@ -40,56 +50,91 @@ namespace AuthenticatorPro
 
                 if (cameras.Count < 1)
                 {
-                    // TODO: handle this
+                    MessageDialog dialog = new MessageDialog("You don't have any cameras attached to this device to use for scanning.", "Camera Not Found");
+                    await dialog.ShowAsync();
+
+                    if (Frame.CanGoBack)
+                        Frame.GoBack();
                 }
 
-                MediaCaptureInitializationSettings settings;
+                MediaCaptureInitializationSettings settings = null;
+                DeviceInformation camera = null;
 
-                if (cameras.Count == 1)
+                foreach (var item in cameras)
                 {
-                    settings = new MediaCaptureInitializationSettings { VideoDeviceId = cameras[0].Id }; // 0 => front, 1 => back
+                    if (item.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Back)
+                    {
+                        camera = item;
+                        break;
+                    }
                 }
-                else
-                {
-                    settings = new MediaCaptureInitializationSettings { VideoDeviceId = cameras[1].Id }; // 0 => front, 1 => back
-                }
+
+                if (camera == null)
+                    camera = cameras[0];
+
+                settings = new MediaCaptureInitializationSettings { VideoDeviceId = camera.Id };
 
                 await captureManager.InitializeAsync(settings);
 
                 this.cptCameraFeed.Source = captureManager;
 
+                captureManager.SetPreviewRotation(VideoRotation.Clockwise90Degrees);
+
                 await captureManager.StartPreviewAsync();
 
-                while (scanResult == null)
-                {
-                    var photoStorageFile = await KnownFolders.PicturesLibrary.CreateFileAsync("scan.jpg", CreationCollisionOption.GenerateUniqueName);
-                    await captureManager.CapturePhotoToStorageFileAsync(ImageEncodingProperties.CreateJpeg(), photoStorageFile);
+                dispatcherTimer = new DispatcherTimer();
+                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 3, 0);
+                dispatcherTimer.Tick += DispatcherTimer_Tick;
 
-                    var stream = await photoStorageFile.OpenReadAsync();
-
-                    var writeableBmp = new WriteableBitmap(1, 1);
-                    writeableBmp.SetSource(stream);
-
-                    writeableBmp = new WriteableBitmap(writeableBmp.PixelWidth, writeableBmp.PixelHeight);
-
-                    stream.Seek(0);
-                    writeableBmp.SetSource(stream);
-
-                    scanResult = ScanBitmap(writeableBmp);
-
-                    await photoStorageFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
-                }
-
-                await captureManager.StopPreviewAsync();
-
-                App.BarcodeScannerResult = scanResult.Text;
-
-                if (Frame.CanGoBack)
-                    Frame.GoBack();
+                dispatcherTimer.Start();
             }
             catch (Exception ex)
             {
-                // TODO: handle this
+                MessageDialog dialog = new MessageDialog("Something went wrong while decoding the QR code. Please try scanning again.", "Scanning Failed");
+                dialog.ShowAsync();
+            }
+        }
+
+        private async void DispatcherTimer_Tick(object sender, object e)
+        {
+            try
+            {
+                dispatcherTimer.Stop();
+
+                await captureManager.VideoDeviceController.FocusControl.FocusAsync();
+
+                var photoStorageFile = await KnownFolders.PicturesLibrary.CreateFileAsync("scan.jpg", CreationCollisionOption.GenerateUniqueName);
+                await captureManager.CapturePhotoToStorageFileAsync(ImageEncodingProperties.CreateJpeg(), photoStorageFile);
+
+                var stream = await photoStorageFile.OpenReadAsync();
+
+                var writeableBmp = new WriteableBitmap(1, 1);
+                writeableBmp.SetSource(stream);
+
+                writeableBmp = new WriteableBitmap(writeableBmp.PixelWidth, writeableBmp.PixelHeight);
+
+                stream.Seek(0);
+                writeableBmp.SetSource(stream);
+
+                scanResult = ScanBitmap(writeableBmp);
+
+                await photoStorageFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
+
+                if (scanResult != null)
+                {
+                    App.BarcodeScannerResult = scanResult.Text;
+
+                    if (Frame.CanGoBack)
+                        Frame.GoBack();
+                }
+
+                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+                dispatcherTimer.Start();
+            }
+            catch (Exception ex)
+            {
+                MessageDialog dialog = new MessageDialog("Something went wrong while decoding the QR code. Please try scanning again.", "Scanning Failed");
+                dialog.ShowAsync();
             }
         }
 
@@ -104,11 +149,6 @@ namespace AuthenticatorPro
             var result = barcodeReader.Decode(writeableBmp);
 
             return result;
-        }
-
-        protected override async void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-            await captureManager.StopPreviewAsync();
         }
     }
 }
