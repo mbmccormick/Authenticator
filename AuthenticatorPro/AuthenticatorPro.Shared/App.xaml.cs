@@ -15,9 +15,13 @@ namespace AuthenticatorPro
         private TransitionCollection transitions;
 #endif
 
-        public static List<Account> Accounts;
-        public static TimeSpan NtpTimeOffset;
+        public static bool RoamAccountSecrets;
+        public static bool AutomaticTimeCorrection;
 
+        public static List<Account> Accounts;
+        
+        public static TimeSpan NtpTimeOffset;
+        
         public App()
         {
             this.InitializeComponent();

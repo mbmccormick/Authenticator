@@ -36,20 +36,32 @@ namespace AuthenticatorPro
 
         private void InitializeApplication()
         {
+            if (ApplicationData.Current.RoamingSettings.Values.ContainsKey("RoamAccountSecrets"))
+            {
+                var value = ApplicationData.Current.RoamingSettings.Values["RoamAccountSecrets"] as bool?;
+
+                if (value.HasValue)
+                    App.RoamAccountSecrets = value.Value;
+                else
+                    App.RoamAccountSecrets = true;
+            }
+
+            if (ApplicationData.Current.RoamingSettings.Values.ContainsKey("AutomaticTimeCorrection"))
+            {
+                var value = ApplicationData.Current.RoamingSettings.Values["AutomaticTimeCorrection"] as bool?;
+
+                if (value.HasValue)
+                    App.AutomaticTimeCorrection = value.Value;
+                else
+                    App.AutomaticTimeCorrection = true;
+            }
+
             App.Accounts = new List<Account>();
+
             App.NtpTimeOffset = new TimeSpan(0, 0, 0, 0, 0);
 
-            NtpClient.SynchronizeDeviceTime();
-
-            if (ApplicationData.Current.RoamingSettings.Values.ContainsKey("RoamAccountSecrets") == false)
-            {
-                ApplicationData.Current.RoamingSettings.Values["RoamAccountSecrets"] = true;
-            }
-
-            if (ApplicationData.Current.RoamingSettings.Values.ContainsKey("AutomaticTimeCorrection") == false)
-            {
-                ApplicationData.Current.RoamingSettings.Values["AutomaticTimeCorrection"] = true;
-            }
+            if (App.AutomaticTimeCorrection)
+                NtpClient.SynchronizeDeviceTime();
         }
 
         private void LoadData()

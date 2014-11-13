@@ -28,21 +28,8 @@ namespace AuthenticatorPro
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (ApplicationData.Current.RoamingSettings.Values.ContainsKey("RoamAccountSecrets"))
-            {
-                var value = ApplicationData.Current.RoamingSettings.Values["RoamAccountSecrets"] as bool?;
-
-                if (value.HasValue)
-                    this.togRoamAccountSecrets.IsOn = value.Value;
-            }
-
-            if (ApplicationData.Current.RoamingSettings.Values.ContainsKey("AutomaticTimeCorrection"))
-            {
-                var value = ApplicationData.Current.RoamingSettings.Values["AutomaticTimeCorrection"] as bool?;
-
-                if (value.HasValue)
-                    this.togAutomaticTimeCorrection.IsOn = value.Value;
-            }
+            this.togRoamAccountSecrets.IsOn = App.RoamAccountSecrets;
+            this.togAutomaticTimeCorrection.IsOn = App.AutomaticTimeCorrection;
 
             this.txtDrift.Text = "Your device is currently behind by " + App.NtpTimeOffset.ToString(@"hh\:mm\:ss") + " (hh:mm:ss).";
         }
@@ -50,10 +37,10 @@ namespace AuthenticatorPro
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             if (this.togRoamAccountSecrets != null)
-                ApplicationData.Current.RoamingSettings.Values["RoamAccountSecrets"] = this.togRoamAccountSecrets.IsOn;
+                App.RoamAccountSecrets = this.togRoamAccountSecrets.IsOn;
 
             if (this.togAutomaticTimeCorrection != null)
-                ApplicationData.Current.RoamingSettings.Values["AutomaticTimeCorrection"] = this.togAutomaticTimeCorrection.IsOn;
+                App.AutomaticTimeCorrection = this.togAutomaticTimeCorrection.IsOn;
 
             if (Frame.CanGoBack)
                 Frame.GoBack();
