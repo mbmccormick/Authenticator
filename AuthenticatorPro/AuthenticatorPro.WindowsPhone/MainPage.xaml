@@ -50,7 +50,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
 
-                        <StackPanel Margin="0,0,0,12" FlyoutBase.AttachedFlyout="{StaticResource flyContextMenu}">
+                        <StackPanel Margin="0,0,0,12" FlyoutBase.AttachedFlyout="{StaticResource flyContextMenu}" Tapped="StackPanel_Tapped">
                             <TextBlock Text="{Binding Code}" Style="{ThemeResource HeaderTextBlockStyle}" FontSize="48" />
                             <TextBlock Text="{Binding Name}" Style="{ThemeResource SubheaderTextBlockStyle}" FontSize="18" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" />
                         </StackPanel>

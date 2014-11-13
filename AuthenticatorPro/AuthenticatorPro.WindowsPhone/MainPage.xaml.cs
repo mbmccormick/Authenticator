@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 
 namespace AuthenticatorPro
@@ -78,7 +79,10 @@ namespace AuthenticatorPro
                 dispatcherTimer.Start();
             }
 
-            Accounts = new ObservableCollection<Account>();
+            if (Accounts == null)
+                Accounts = new ObservableCollection<Account>();
+            else
+                Accounts.Clear();
 
             foreach (Account a in App.Accounts)
             {
@@ -115,6 +119,11 @@ namespace AuthenticatorPro
         private void btnSettings_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsPage));
+        }
+
+        private void StackPanel_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
         }
 
         private void btnCopyToClipboard_Click(object sender, RoutedEventArgs e)

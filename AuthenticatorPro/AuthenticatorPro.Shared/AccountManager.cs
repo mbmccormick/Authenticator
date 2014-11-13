@@ -56,6 +56,8 @@ namespace AuthenticatorPro
 
             foreach (var credential in vault.RetrieveAll())
             {
+                credential.RetrievePassword();
+
                 Account a = new Account();
                 a.Name = credential.UserName;
                 a.SecretKey = credential.Password;
@@ -66,9 +68,9 @@ namespace AuthenticatorPro
 
         public static void SerializeRoamedAccounts()
         {
-            PasswordVault vault = new PasswordVault();
-
             ClearRoamedAccounts();
+
+            PasswordVault vault = new PasswordVault();
 
             foreach (var a in App.Accounts)
             {

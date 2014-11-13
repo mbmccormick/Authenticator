@@ -119,6 +119,8 @@ namespace AuthenticatorPro
             }
             else
             {
+                AccountManager.SerializeAccounts();
+
                 Application.Current.Exit();
             }
         }
