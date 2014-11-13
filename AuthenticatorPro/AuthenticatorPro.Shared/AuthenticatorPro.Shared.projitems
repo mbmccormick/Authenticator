@@ -17,5 +17,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NtpClient.cs" />
   </ItemGroup>
 </Project>

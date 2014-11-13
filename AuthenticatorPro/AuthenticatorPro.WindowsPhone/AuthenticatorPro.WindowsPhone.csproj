@@ -123,14 +123,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="FromNtp">
-      <HintPath>..\..\packages\FromNtp.1.0.8\lib\FromNtp.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Albireo.Otp\Albireo.Otp.csproj">
       <Project>{711ea10d-3a58-4ae6-ae55-3c4908a55312}</Project>
       <Name>Albireo.Otp</Name>

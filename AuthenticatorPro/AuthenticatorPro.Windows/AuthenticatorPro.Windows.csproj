@@ -113,7 +113,6 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <None Include="AuthenticatorPro.Windows_TemporaryKey.pfx" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Logo.scale-100.png" />
@@ -126,11 +125,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="FromNtp">
-      <HintPath>..\..\packages\FromNtp.1.0.8\lib\FromNtp.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Albireo.Otp\Albireo.Otp.csproj">

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using Tarczynski.NtpDateTime;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -38,7 +37,9 @@ namespace AuthenticatorPro
         private void InitializeApplication()
         {
             App.Accounts = new List<Account>();
-            App.NtpTimeOffset = DateTime.Now.FromNtp() - DateTime.Now;
+            App.NtpTimeOffset = new TimeSpan(0, 0, 0, 0, 0);
+
+            NtpClient.SynchronizeDeviceTime();
 
             if (ApplicationData.Current.RoamingSettings.Values.ContainsKey("RoamAccountSecrets") == false)
             {
@@ -61,7 +62,7 @@ namespace AuthenticatorPro
 
             Accounts = new ObservableCollection<Account>();
 
-            foreach(Account a in App.Accounts)
+            foreach (Account a in App.Accounts)
             {
                 Accounts.Add(a);
             }
