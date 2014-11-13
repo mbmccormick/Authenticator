@@ -29,7 +29,7 @@
 
         <StackPanel Grid.Row="1" x:Name="ContentRoot" Margin="19,9.5,19,0">
 
-            <CaptureElement Name="cptCameraFeed" Height="400" />
+            <CaptureElement Name="cptCameraFeed" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" />
 
         </StackPanel>
 

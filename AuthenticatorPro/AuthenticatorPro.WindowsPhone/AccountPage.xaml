@@ -35,7 +35,7 @@
             <TextBlock Text="Secret Key:" Style="{ThemeResource BaseTextBlockStyle}" />
             <TextBox x:Name="txtSecretKey" />
 
-            <TextBlock Text="If a barcode is available, you can tap the camera icon below instead." Style="{ThemeResource BaseTextBlockStyle}" />
+            <TextBlock Text="If a barcode is available, you can tap the camera icon below to scan it." Style="{ThemeResource BaseTextBlockStyle}" />
             
         </StackPanel>
         

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
+using Windows.Devices.Enumeration;
 using Windows.Media.Capture;
 using Windows.Media.MediaProperties;
+using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -14,6 +17,7 @@ namespace AuthenticatorPro
     {
         MediaCapture captureManager;
         BarcodeReader reader;
+        Result scanResult;
 
         public ScanPage()
         {
@@ -22,6 +26,7 @@ namespace AuthenticatorPro
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            captureManager = new MediaCapture();
             reader = new BarcodeReader();
 
             PreviewCameraFeed();
@@ -29,61 +34,81 @@ namespace AuthenticatorPro
 
         private async void PreviewCameraFeed()
         {
-            MediaCapture captureManager = new MediaCapture();
-            await captureManager.InitializeAsync();
-
-            captureManager.SetPreviewRotation(VideoRotation.Clockwise90Degrees);
-            captureManager.FocusChanged += captureManager_FocusChanged;
-
-            cptCameraFeed.Source = captureManager;
-
-            await captureManager.StartPreviewAsync();
-
-            DispatcherTimer dt = new DispatcherTimer();
-            dt.Interval = new TimeSpan(0, 0, 0, 3, 0);
-            dt.Tick += DispatchTimer_Tick;
-
-            dt.Start();
-        }
-
-        private async void DispatchTimer_Tick(object sender, object e)
-        {
             try
             {
-                await captureManager.VideoDeviceController.FocusControl.FocusAsync();
+                var cameras = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+
+                if (cameras.Count < 1)
+                {
+                    // TODO: handle this
+                }
+
+                MediaCaptureInitializationSettings settings;
+
+                if (cameras.Count == 1)
+                {
+                    settings = new MediaCaptureInitializationSettings { VideoDeviceId = cameras[0].Id }; // 0 => front, 1 => back
+                }
+                else
+                {
+                    settings = new MediaCaptureInitializationSettings { VideoDeviceId = cameras[1].Id }; // 0 => front, 1 => back
+                }
+
+                await captureManager.InitializeAsync(settings);
+
+                this.cptCameraFeed.Source = captureManager;
+
+                await captureManager.StartPreviewAsync();
+
+                while (scanResult == null)
+                {
+                    var photoStorageFile = await KnownFolders.PicturesLibrary.CreateFileAsync("scan.jpg", CreationCollisionOption.GenerateUniqueName);
+                    await captureManager.CapturePhotoToStorageFileAsync(ImageEncodingProperties.CreateJpeg(), photoStorageFile);
+
+                    var stream = await photoStorageFile.OpenReadAsync();
+
+                    var writeableBmp = new WriteableBitmap(1, 1);
+                    writeableBmp.SetSource(stream);
+
+                    writeableBmp = new WriteableBitmap(writeableBmp.PixelWidth, writeableBmp.PixelHeight);
+
+                    stream.Seek(0);
+                    writeableBmp.SetSource(stream);
+
+                    scanResult = ScanBitmap(writeableBmp);
+
+                    await photoStorageFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                }
+
+                await captureManager.StopPreviewAsync();
+
+                App.BarcodeScannerResult = scanResult.Text;
+
+                if (Frame.CanGoBack)
+                    Frame.GoBack();
             }
             catch (Exception ex)
             {
-
+                // TODO: handle this
             }
         }
 
-        private async void captureManager_FocusChanged(MediaCapture sender, MediaCaptureFocusChangedEventArgs args)
+        private Result ScanBitmap(WriteableBitmap writeableBmp)
         {
-            if (args.FocusState == Windows.Media.Devices.MediaCaptureFocusState.Focused)
+            var barcodeReader = new BarcodeReader
             {
-                ImageEncodingProperties imageProperties = ImageEncodingProperties.CreateJpeg();
-                InMemoryRandomAccessStream imageStream = new InMemoryRandomAccessStream();
+                TryHarder = true,
+                AutoRotate = true
+            };
 
-                await sender.CapturePhotoToStreamAsync(imageProperties, imageStream);
+            var result = barcodeReader.Decode(writeableBmp);
 
-                await imageStream.FlushAsync();
+            return result;
+        }
 
-                WriteableBitmap image = new WriteableBitmap(300, 400);
-
-                imageStream.Seek(0);
-                image.SetSource(imageStream);
-
-                var result = reader.Decode(image);
-
-                if (result != null)
-                {
-                    App.BarcodeScannerResult = result.Text;
-
-                    if (Frame.CanGoBack)
-                        Frame.GoBack();
-                }
-            }
+        protected override async void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            await captureManager.StopPreviewAsync();
         }
     }
 }
