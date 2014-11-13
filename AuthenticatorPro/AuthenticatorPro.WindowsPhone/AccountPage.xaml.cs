@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Storage;
 using Windows.Security.Credentials;
+using Windows.UI.Popups;
 
 namespace AuthenticatorPro
 {
@@ -27,9 +28,29 @@ namespace AuthenticatorPro
             this.InitializeComponent();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
-            
+            if (App.BarcodeScannerResult != null)
+            {
+                string encoding = App.BarcodeScannerResult;
+
+                try
+                {
+                    encoding = encoding.Replace("otpauth://totp/", "");
+                    string[] splitString = encoding.Split(Convert.ToChar("?"));
+                    splitString[1] = splitString[1].Replace("secret=", "");
+
+                    this.txtName.Text = splitString[0];
+                    this.txtSecretKey.Text = splitString[1];
+                }
+                catch (Exception ex)
+                {
+                    MessageDialog dialog = new MessageDialog("Something went wrong while decoding the QR code. Please try scanning again.", "Scanning Failed");
+                    dialog.ShowAsync();
+                }
+
+                App.BarcodeScannerResult = null;
+            }
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
@@ -46,7 +67,7 @@ namespace AuthenticatorPro
 
         private void btnScan_Click(object sender, RoutedEventArgs e)
         {
-
+            Frame.Navigate(typeof(ScanPage));
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)

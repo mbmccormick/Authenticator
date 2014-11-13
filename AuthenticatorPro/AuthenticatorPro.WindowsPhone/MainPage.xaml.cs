@@ -29,7 +29,8 @@ namespace AuthenticatorPro
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            InitializeApplication();
+            if (e.NavigationMode == NavigationMode.New)
+                InitializeApplication();
 
             LoadData();
         }
@@ -62,6 +63,8 @@ namespace AuthenticatorPro
 
             if (App.AutomaticTimeCorrection)
                 NtpClient.SynchronizeDeviceTime();
+
+            AccountManager.DeserializeAccounts();
         }
 
         private void LoadData()

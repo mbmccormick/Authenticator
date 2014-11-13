@@ -21,6 +21,8 @@ namespace AuthenticatorPro
         public static List<Account> Accounts;
         
         public static TimeSpan NtpTimeOffset;
+
+        public static string BarcodeScannerResult;
         
         public App()
         {
@@ -100,6 +102,8 @@ namespace AuthenticatorPro
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
+
+            AccountManager.SerializeAccounts();
 
             // TODO: Save application state and stop any background activity
             deferral.Complete();
