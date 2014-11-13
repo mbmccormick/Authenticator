@@ -1,0 +1,50 @@
+﻿<Page
+    x:Class="AuthenticatorPro.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AuthenticatorPro"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    DataContext="{Binding RelativeSource={RelativeSource Self}}">
+
+    <Grid x:Name="LayoutRoot">
+
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition/>
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="19,0,0,0">
+            <TextBlock Text="AUTHENTICATOR PRO" Style="{ThemeResource TitleTextBlockStyle}" Margin="0,12,0,0"/>
+            <TextBlock Text="settings" Margin="0,-6.5,0,26.5" Style="{ThemeResource HeaderTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" x:Name="ContentRoot" Margin="19,9.5,19,0">
+
+            <ToggleSwitch x:Name="togRoamAccountSecrets" Header="Account secrets roaming" OnContent="On" OffContent="Off" IsOn="True" />
+            <TextBlock Text="Account secrets roaming will sync your account secrets between trusted devices that you have logged into with your Microsoft Account." Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,12" />
+
+            <ToggleSwitch x:Name="togAutomaticTimeCorrection" Header="Automatic time correction" OnContent="On" OffContent="Off" IsOn="True" Margin="0,24,0,0" />
+            <TextBlock Text="Automatic time correction uses worldwide network time servers to correct for the time inaccuracy of your device's internal clock. This helps generate correct time-based security codes." Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,12" />
+
+            <TextBlock x:Name="txtDrift" Text="Your device is currently behind by 00:00:00 (hh:mm:ss)." Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,12" />
+
+        </StackPanel>
+
+    </Grid>
+
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton x:Name="btnSave" Icon="Save" Label="save" Click="btnSave_Click" />
+        </CommandBar>
+    </Page.BottomAppBar>
+
+</Page>

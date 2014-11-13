@@ -1,0 +1,60 @@
+﻿<Page
+    x:Class="AuthenticatorPro.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AuthenticatorPro"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    DataContext="{Binding RelativeSource={RelativeSource Self}}">
+
+    <Grid x:Name="LayoutRoot">
+
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition/>
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="19,0,0,0">
+            <TextBlock Text="AUTHENTICATOR PRO" Style="{ThemeResource TitleTextBlockStyle}" Margin="0,12,0,0"/>
+            <TextBlock Text="accounts" Margin="0,-6.5,0,26.5" Style="{ThemeResource HeaderTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" x:Name="ContentRoot" Margin="19,9.5,19,0">
+
+            <ProgressBar x:Name="prgStatusBar" VerticalAlignment="Top" IsIndeterminate="False" HorizontalAlignment="Stretch" Margin="0,-12,0,0" />
+
+            <TextBlock x:Name="txtEmpty" Text="You haven't added any accounts yet. Tap the add button below to get started." Style="{ThemeResource SubheaderTextBlockStyle}" FontSize="24" />
+
+            <ListView x:Name="lstAccounts" ItemsSource="{Binding Accounts}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        
+                        <StackPanel Margin="0,0,0,12">
+                            <TextBlock Text="{Binding Code}" Style="{ThemeResource HeaderTextBlockStyle}" FontSize="48" />
+                            <TextBlock Text="{Binding Name}" Style="{ThemeResource SubheaderTextBlockStyle}" FontSize="18" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" />
+                        </StackPanel>
+                        
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+        </StackPanel>
+        
+    </Grid>
+
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton x:Name="btnAdd" Icon="Add" Label="add" Click="btnAdd_Click" />
+            <AppBarButton x:Name="btnSettings" Icon="Setting" Label="settings" Click="btnSettings_Click" />
+        </CommandBar>
+    </Page.BottomAppBar>
+
+</Page>
