@@ -27,7 +27,11 @@ namespace AuthenticatorPro
             if (this.togAutomaticTimeCorrection != null)
                 App.AutomaticTimeCorrection = this.togAutomaticTimeCorrection.IsOn;
 
-            if (App.RoamAccountSecrets == false)
+            if (App.RoamAccountSecrets)
+            {
+                AccountManager.ClearLocalAccounts();
+            }
+            else
             {
                 AccountManager.ClearRoamedAccounts();
             }
