@@ -38,11 +38,31 @@ namespace AuthenticatorPro
             }
         }
 
-        private void btnSave_Click(object sender, RoutedEventArgs e)
+        private async void btnSave_Click(object sender, RoutedEventArgs e)
         {
             Account item = new Account();
             item.Name = this.txtName.Text;
             item.SecretKey = this.txtSecretKey.Text;
+
+            if (item.Name.Length == 0)
+            {
+                MessageDialog dialog = new MessageDialog("You need to provide a name for this account. Please try again.", "Validation Error");
+                await dialog.ShowAsync();
+
+                return;
+            }
+
+            item.RefreshCode();
+
+            if (item.SecretKey.Length == 0 ||
+                item.Code == null ||
+                item.Code.Length != 6)
+            {
+                MessageDialog dialog = new MessageDialog("The secret key you provided could not be validated. Please try again.", "Validation Error");
+                await dialog.ShowAsync();
+
+                return;
+            }
 
             App.Accounts.Add(item);
 

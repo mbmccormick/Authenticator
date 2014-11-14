@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Windows.Storage;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -121,9 +122,25 @@ namespace AuthenticatorPro
             Frame.Navigate(typeof(SettingsPage));
         }
 
-        private void StackPanel_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        private async void btnFeedback_Click(object sender, RoutedEventArgs e)
         {
-            FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+            // TODO: handle this
+
+            //var mailto = new Uri("mailto:?to=recipient@example.com&subject=The subject of an email&body=Hello from a Windows 8 Metro app.");
+            //await Windows.System.Launcher.LaunchUriAsync(mailto);
+        }
+
+        private void btnAbout_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO: handle this
+        }
+
+        private void StackPanel_Holding(object sender, Windows.UI.Xaml.Input.HoldingRoutedEventArgs e)
+        {
+            if (e.HoldingState == Windows.UI.Input.HoldingState.Started)
+            {
+                FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+            }
         }
 
         private void btnCopyToClipboard_Click(object sender, RoutedEventArgs e)
@@ -133,13 +150,22 @@ namespace AuthenticatorPro
             // TODO: implement clipboard functionality
         }
 
-        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        private async void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             Account item = ((FrameworkElement)sender).DataContext as Account;
 
-            App.Accounts.Remove(item);
+            MessageDialog dialog = new MessageDialog("Are you sure you want to delete your " + item.Name + " account?", "Delete Account");
+            dialog.Commands.Add(new UICommand("yes"));
+            dialog.Commands.Add(new UICommand("no"));
 
-            LoadData();
+            var result = await dialog.ShowAsync();
+
+            if (result.Label == "yes")
+            {
+                App.Accounts.Remove(item);
+
+                LoadData();
+            }
         }
     }
 }

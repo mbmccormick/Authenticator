@@ -12,12 +12,16 @@
     <ApplicationDefinition Include="$(MSBuildThisFileDirectory)App.xaml">
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="$(MSBuildThisFileDirectory)Account.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AccountManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AccountPage.xaml.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)NtpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Account.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\AccountManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\CodeGenerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\NtpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MainPage.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ScanPage.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SettingsPage.xaml.cs" />
   </ItemGroup>
 </Project>

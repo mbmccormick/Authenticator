@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     DataContext="{Binding RelativeSource={RelativeSource Self}}">
-    
+
     <Page.Resources>
         <MenuFlyout x:Key="flyContextMenu">
             <MenuFlyout.MenuFlyoutPresenterStyle>
@@ -17,7 +17,6 @@
                     <Setter Property="BorderThickness" Value="5"/>
                 </Style>
             </MenuFlyout.MenuFlyoutPresenterStyle>
-            <MenuFlyoutItem Text="copy to clipboard" DataContext="{Binding}" Click="btnCopyToClipboard_Click"/>
             <MenuFlyoutItem Text="delete" DataContext="{Binding}" Click="btnDelete_Click"/>
         </MenuFlyout>
     </Page.Resources>
@@ -50,7 +49,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
 
-                        <StackPanel Margin="0,0,0,12" FlyoutBase.AttachedFlyout="{StaticResource flyContextMenu}" Tapped="StackPanel_Tapped">
+                        <StackPanel Margin="0,0,0,12" FlyoutBase.AttachedFlyout="{StaticResource flyContextMenu}" Holding="StackPanel_Holding">
                             <TextBlock Text="{Binding Code}" Style="{ThemeResource HeaderTextBlockStyle}" FontSize="48" />
                             <TextBlock Text="{Binding Name}" Style="{ThemeResource SubheaderTextBlockStyle}" FontSize="18" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" />
                         </StackPanel>
@@ -65,8 +64,14 @@
 
     <Page.BottomAppBar>
         <CommandBar>
-            <AppBarButton x:Name="btnAdd" Icon="Add" Label="add" Click="btnAdd_Click" />
-            <AppBarButton x:Name="btnSettings" Icon="Setting" Label="settings" Click="btnSettings_Click" />
+            <CommandBar.PrimaryCommands>
+                <AppBarButton x:Name="btnAdd" Icon="Add" Label="add" Click="btnAdd_Click" />
+                <AppBarButton x:Name="btnSettings" Icon="Setting" Label="settings" Click="btnSettings_Click" />
+            </CommandBar.PrimaryCommands>
+            <CommandBar.SecondaryCommands>
+                <AppBarButton x:Name="btnFeedback" Label="feedback" Click="btnFeedback_Click" />
+                <AppBarButton x:Name="btnAbout" Label="about" Click="btnAbout_Click" />
+            </CommandBar.SecondaryCommands>
         </CommandBar>
     </Page.BottomAppBar>
 
