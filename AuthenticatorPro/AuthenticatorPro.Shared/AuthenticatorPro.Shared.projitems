@@ -19,6 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\Account.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\AccountManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\CodeGenerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\FeedbackHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\NtpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MainPage.xaml.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScanPage.xaml.cs" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
@@ -18,6 +19,8 @@ namespace AuthenticatorPro
 #if WINDOWS_PHONE_APP
         private TransitionCollection transitions;
 #endif
+
+        public static string FeedbackEmailAddress = "feedback@mbmccormick.com";
 
         public static bool RoamAccountSecrets;
         public static bool AutomaticTimeCorrection;
@@ -119,6 +122,9 @@ namespace AuthenticatorPro
             }
             else
             {
+                ApplicationData.Current.RoamingSettings.Values["RoamAccountSecrets"] = App.RoamAccountSecrets;
+                ApplicationData.Current.RoamingSettings.Values["AutomaticTimeCorrection"] = App.AutomaticTimeCorrection;
+
                 AccountManager.SerializeAccounts();
 
                 Application.Current.Exit();
@@ -129,6 +135,9 @@ namespace AuthenticatorPro
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
+
+            ApplicationData.Current.RoamingSettings.Values["RoamAccountSecrets"] = App.RoamAccountSecrets;
+            ApplicationData.Current.RoamingSettings.Values["AutomaticTimeCorrection"] = App.AutomaticTimeCorrection;
 
             AccountManager.SerializeAccounts();
 

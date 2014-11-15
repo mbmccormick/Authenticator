@@ -122,12 +122,9 @@ namespace AuthenticatorPro
             Frame.Navigate(typeof(SettingsPage));
         }
 
-        private async void btnFeedback_Click(object sender, RoutedEventArgs e)
+        private void btnFeedback_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: handle this
-
-            //var mailto = new Uri("mailto:?to=recipient@example.com&subject=The subject of an email&body=Hello from a Windows 8 Metro app.");
-            //await Windows.System.Launcher.LaunchUriAsync(mailto);
+            FeedbackHelper.Feedback();
         }
 
         private void btnAbout_Click(object sender, RoutedEventArgs e)
