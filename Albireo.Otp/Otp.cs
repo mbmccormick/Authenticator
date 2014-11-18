@@ -10,6 +10,7 @@
     using Windows.Security.Cryptography.Core;
 
     using Albireo.Base32;
+    using Windows.Security.Cryptography;
 
     internal static class Otp
     {
@@ -21,24 +22,27 @@
             long counter,
             int digits)
         {
-            //Contract.Requires<ArgumentOutOfRangeException>(Enum.IsDefined(typeof(HashAlgorithm), algorithm));
-            //Contract.Requires<ArgumentOutOfRangeException>(algorithm != HashAlgorithm.Unknown);
-            //Contract.Requires<ArgumentNullException>(secret != null);
-            //Contract.Requires<ArgumentOutOfRangeException>(counter >= 0);
-            //Contract.Requires<ArgumentOutOfRangeException>(digits > 0);
-            //Contract.Ensures(Contract.Result<int>() > 0);
-            //Contract.Ensures(Contract.Result<int>() < Math.Pow(10, digits));
+            //MacAlgorithmProvider algorithmProvider = MacAlgorithmProvider.OpenAlgorithm(algorithm.ToAlgorithmName());
+
+            //var keyMaterial = CryptographicBuffer.ConvertStringToBinary(secret, BinaryStringEncoding.Utf8);
+
+            //var hash = algorithmProvider.CreateHash(keyMaterial);
+            //hash.Append(CounterToBytes(counter).AsBuffer());
+
+            //var hmac = hash.GetValueAndReset().ToArray().Select(b => Convert.ToInt32(b)).ToArray();
 
             MacAlgorithmProvider algorithmProvider = MacAlgorithmProvider.OpenAlgorithm(algorithm.ToAlgorithmName());
 
-            byte[] bytes = new byte[secret.Length * sizeof(char)];
-            System.Buffer.BlockCopy(secret.ToCharArray(), 0, bytes, 0, bytes.Length);
+            var keyMaterial = CryptographicBuffer.ConvertStringToBinary(secret, BinaryStringEncoding.Utf8);
+            var key = algorithmProvider.CreateKey(keyMaterial);
 
-            var hash = algorithmProvider.CreateHash(bytes.AsBuffer());
-            hash.Append(CounterToBytes(counter).AsBuffer());
+            var hash = CryptographicEngine.Sign(key, CounterToBytes(counter).AsBuffer());
 
-            var hmac = hash.GetValueAndReset().ToArray().Select(b => Convert.ToInt32(b)).ToArray();
+            byte[] hashArray = new byte[hash.Length];
+            CryptographicBuffer.CopyToByteArray(hash, out hashArray);
 
+            var hmac = hashArray.Select(b => Convert.ToInt32(b)).ToArray();
+            
             var offset = hmac[19] & 0xF;
 
             var code =
@@ -60,21 +64,6 @@
             long counter,
             int period)
         {
-            //Contract.Requires<ArgumentOutOfRangeException>(Enum.IsDefined(typeof(OtpType), type));
-            //Contract.Requires<ArgumentOutOfRangeException>(type != OtpType.Unknown);
-            //Contract.Requires<ArgumentNullException>(issuer != null);
-            //Contract.Requires<ArgumentOutOfRangeException>(!string.IsNullOrWhiteSpace(issuer));
-            //Contract.Requires<ArgumentNullException>(account != null);
-            //Contract.Requires<ArgumentOutOfRangeException>(!string.IsNullOrWhiteSpace(account));
-            //Contract.Requires<ArgumentNullException>(secret != null);
-            //Contract.Requires<ArgumentException>(secret.Length > 0);
-            //Contract.Requires<ArgumentOutOfRangeException>(Enum.IsDefined(typeof(HashAlgorithm), algorithm));
-            //Contract.Requires<ArgumentOutOfRangeException>(algorithm != HashAlgorithm.Unknown);
-            //Contract.Requires<ArgumentOutOfRangeException>(digits > 0);
-            //Contract.Requires<ArgumentOutOfRangeException>(counter >= 0);
-            //Contract.Requires<ArgumentOutOfRangeException>(period > 0);
-            //Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
-
             return
                 string.Format(
                     CultureInfo.InvariantCulture,
@@ -92,9 +81,6 @@
 
         private static byte[] CounterToBytes(long counter)
         {
-            //Contract.Requires<ArgumentOutOfRangeException>(counter >= 0);
-            //Contract.Ensures(Contract.Result<byte[]>() != null);
-
             var result = new List<byte>();
 
             while (counter != 0)
