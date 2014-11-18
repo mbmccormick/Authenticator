@@ -22,15 +22,6 @@
             long counter,
             int digits)
         {
-            //MacAlgorithmProvider algorithmProvider = MacAlgorithmProvider.OpenAlgorithm(algorithm.ToAlgorithmName());
-
-            //var keyMaterial = CryptographicBuffer.ConvertStringToBinary(secret, BinaryStringEncoding.Utf8);
-
-            //var hash = algorithmProvider.CreateHash(keyMaterial);
-            //hash.Append(CounterToBytes(counter).AsBuffer());
-
-            //var hmac = hash.GetValueAndReset().ToArray().Select(b => Convert.ToInt32(b)).ToArray();
-
             MacAlgorithmProvider algorithmProvider = MacAlgorithmProvider.OpenAlgorithm(algorithm.ToAlgorithmName());
 
             var keyMaterial = CryptographicBuffer.ConvertStringToBinary(secret, BinaryStringEncoding.Utf8);
